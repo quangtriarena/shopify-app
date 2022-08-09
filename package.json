@@ -10,6 +10,7 @@
     "info": "shopify app info",
     "scaffold": "shopify app scaffold",
     "deploy": "shopify app deploy",
+    "inst": "yarn && cd web/ && yarn && cd frontend/ && yarn",
     "serve": "cd web/ && yarn serve"
   },
   "dependencies": {
