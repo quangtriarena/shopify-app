@@ -38,6 +38,9 @@ const PROD_INDEX_PATH = `${process.cwd()}/frontend/dist/`
 
 const DB_PATH = `${process.cwd()}/database.sqlite`
 
+const { POSTGRES_USER, POSTGRES_HOST, POSTGRES_DB, POSTGRES_PWD, POSTGRES_PORT } = process.env
+const POSTGRES_URL = `postgres://${POSTGRES_USER}:${POSTGRES_PWD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`
+
 Shopify.Context.initialize({
   API_KEY: process.env.SHOPIFY_API_KEY,
   API_SECRET_KEY: process.env.SHOPIFY_API_SECRET,
@@ -47,7 +50,8 @@ Shopify.Context.initialize({
   API_VERSION: LATEST_API_VERSION,
   IS_EMBEDDED_APP: true,
   // This should be replaced with your preferred storage strategy
-  SESSION_STORAGE: new Shopify.Session.SQLiteSessionStorage(DB_PATH),
+  // SESSION_STORAGE: new Shopify.Session.SQLiteSessionStorage(DB_PATH),
+  SESSION_STORAGE: new Shopify.Session.PostgreSQLSessionStorage(POSTGRES_URL),
 })
 
 Shopify.Webhooks.Registry.addHandler('APP_UNINSTALLED', {
@@ -199,7 +203,7 @@ createServer().then(({ app }) =>
     console.log(`${process.env.HOST}/install`)
     console.log('')
     console.log('Shopify Admin App:')
-    console.log(`https://${process.env.SHOP}/admin/apps/${process.env.SHOPIFY_API_KEY}/`)
+    console.log(`${process.env.HOST}/api/auth?shop=${process.env.SHOP}`)
     console.log('')
   }),
 )

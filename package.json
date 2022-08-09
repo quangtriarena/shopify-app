@@ -9,7 +9,8 @@
     "dev": "shopify app dev",
     "info": "shopify app info",
     "scaffold": "shopify app scaffold",
-    "deploy": "shopify app deploy"
+    "deploy": "shopify app deploy",
+    "serve": "cd web/ && yarn serve"
   },
   "dependencies": {
     "@shopify/app": "3.6.1",
