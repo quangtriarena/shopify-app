@@ -56,9 +56,7 @@ function PlansPage(props) {
       if (res.data?.confirmation_url) {
         window.top.location.replace(res.data.confirmation_url)
       } else {
-        window.top.location.replace(
-          `${window.BACKEND_URL}?shop=${window.shopOrigin}&host=${window.host}`,
-        )
+        window.top.location.replace(`${window.BACKEND_URL}/api/auth?shop=${window.shopOrigin}`)
       }
     } catch (error) {
       console.log(error)
@@ -110,23 +108,19 @@ function PlansPage(props) {
             </Card.Section>
             <Card.Section>
               <Stack distribution="equalSpacing" alignment="trailing">
-                <Stack vertical spacing="tight">
+                <Stack vertical spacing="extraTight">
                   <Stack alignment="baseline">
-                    <div style={{ minWidth: 120 }}>
-                      <DisplayText size="small">Credits point:</DisplayText>
-                    </div>
+                    <DisplayText size="small">Credits point:</DisplayText>
                     <DisplayText size="small">
-                      <span style={{ color: 'var(--successColor)' }}>
+                      <span className="color__success">
                         <b>{numberWithCommas(applicationCharge.credits[storeSetting.appPlan])}</b>
                       </span>
                     </DisplayText>
                   </Stack>
                   <Stack alignment="baseline">
-                    <div style={{ minWidth: 120 }}>
-                      <DisplayText size="small">Price:</DisplayText>
-                    </div>
+                    <DisplayText size="small">Price:</DisplayText>
                     <DisplayText size="small">
-                      <span style={{ color: 'var(--linkColor)' }}>
+                      <span className="color__link">
                         <b>$ {numberWithCommas(applicationCharge.price[storeSetting.appPlan])}</b>
                       </span>
                     </DisplayText>
@@ -146,17 +140,16 @@ function PlansPage(props) {
             </Card.Section>
             <Card.Section>
               <Stack distribution="equalSpacing" alignment="trailing">
-                <Stack vertical spacing="tight">
+                <Stack vertical spacing="extraTight">
                   <DisplayText size="small">
                     <span
-                      style={{
-                        color:
-                          storeSetting.appPlan === 'PRO'
-                            ? 'var(--linkColor)'
-                            : storeSetting.appPlan === 'PLUS'
-                            ? 'var(--successColor)'
-                            : 'unset',
-                      }}
+                      className={
+                        storeSetting.appPlan === 'PRO'
+                          ? 'color__link'
+                          : storeSetting.appPlan === 'PLUS'
+                          ? 'color__success'
+                          : ''
+                      }
                     >
                       <b>{storeSetting.appPlan}</b>
                     </span>

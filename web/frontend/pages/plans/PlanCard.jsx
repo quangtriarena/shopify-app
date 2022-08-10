@@ -16,10 +16,22 @@ function PlanCard(props) {
       <Card.Section>
         <Stack distribution="equalSpacing" alignment="baseline">
           <DisplayText size="small">
-            <b>{item.plan}</b>
+            <span
+              className={
+                item.plan === 'PRO' ? 'color__link' : item.plan === 'PLUS' ? 'color__success' : ''
+              }
+            >
+              <b>{item.plan}</b>
+            </span>
           </DisplayText>
           <DisplayText size="small">
-            <b>{item.price === 0 ? 'FREE' : `$${item.price}`}</b>
+            <span
+              className={
+                item.plan === 'PRO' ? 'color__link' : item.plan === 'PLUS' ? 'color__success' : ''
+              }
+            >
+              <b>{item.price === 0 ? 'FREE' : `$${item.price}`}</b>
+            </span>
           </DisplayText>
         </Stack>
       </Card.Section>

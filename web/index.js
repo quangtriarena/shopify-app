@@ -32,6 +32,7 @@ import { AppInstallations } from './app_installations.js'
 import webhookRoute from './backend/routes/webhook/index.js'
 import storeSettingRoute from './backend/routes/admin/store_setting.js'
 import productRoute from './backend/routes/admin/product.js'
+import billingRoute from './backend/routes/admin/billing.js'
 
 const USE_ONLINE_TOKENS = false
 const TOP_LEVEL_OAUTH_COOKIE = 'shopify_top_level_oauth'
@@ -137,6 +138,7 @@ export async function createServer(
    */
   storeSettingRoute(app, Shopify)
   productRoute(app, Shopify)
+  billingRoute(app, Shopify)
   // -------------------------------------------
 
   // All endpoints after this point will have access to a request.body

@@ -6,10 +6,12 @@ import { trophyImage } from '../assets'
 import { ProductsCard } from '../components'
 
 import ProductsPage from './products'
+import PlansPage from './plans'
 
 export default function HomePage(props) {
   if (true) {
     // return <ProductsPage {...props} />
+    // return <PlansPage {...props} />
   }
 
   return (

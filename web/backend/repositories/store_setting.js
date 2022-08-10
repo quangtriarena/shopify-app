@@ -141,8 +141,6 @@ export default {
         }
       }
 
-      console.log('storeSetting :>> ', storeSetting)
-
       return storeSetting
     } catch (error) {
       throw { message: error.message }
@@ -237,9 +235,11 @@ export default {
               plain: true,
             },
           )
-          storeSetting = toJSON(storeSetting[1])
+          storeSetting = storeSetting[1].toJSON()
         }
       }
+
+      console.log('storeSetting :>> ', storeSetting)
 
       return storeSetting
     } catch (error) {

@@ -58,6 +58,11 @@ function AppHeader(props) {
             <Stack.Item>
               <Badge status={getBadgeStatus(storeSetting.appPlan)}>{storeSetting.appPlan}</Badge>
             </Stack.Item>
+            {storeSetting.testStore && (
+              <Stack.Item>
+                <Badge>TEST STORE</Badge>
+              </Stack.Item>
+            )}
           </Stack>
           <div>
             Credits point: <b>{numberWithCommas(storeSetting.credits)}</b>

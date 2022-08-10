@@ -2,6 +2,8 @@ import verifyToken from '../../auth/verifyToken.js'
 import ResponseHandler from '../../helpers/responseHandler.js'
 import StoreSettingMiddleware from '../../middlewares/store_setting.js'
 
+const TEST_STORES = ['haloha-shop.myshopify.com', 'electro-5-demo.myshopify.com']
+
 export default function storeSettingRoute(app, Shopify) {
   app.get('/api/store-settings', async (req, res) => {
     try {
@@ -23,7 +25,9 @@ export default function storeSettingRoute(app, Shopify) {
 
       const { acceptedAt } = req.body
 
-      const data = await StoreSettingMiddleware.update(storeSetting.id, { acceptedAt })
+      const testStore = TEST_STORES.includes(session.shop)
+
+      const data = await StoreSettingMiddleware.update(storeSetting.id, { acceptedAt, testStore })
 
       return ResponseHandler.success(res, data)
     } catch (error) {
