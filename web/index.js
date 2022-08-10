@@ -187,18 +187,17 @@ export async function createServer(
 
 createServer().then(({ app }) =>
   app.listen(PORT, () => {
-    console.log('')
     console.log('++++++++++++++++++++++++++++++++++++')
     console.log('+                                  +')
     console.log('+   Welcome to ArenaCommerce App   +')
     console.log('+                                  +')
     console.log('++++++++++++++++++++++++++++++++++++')
-    console.log('')
-    console.log('Install Link:')
-    console.log(`${process.env.HOST}/install`)
-    console.log('')
-    console.log('Shopify Admin App:')
-    console.log(`${process.env.HOST}/api/auth?shop=${process.env.SHOP}`)
-    console.log('')
+    console.log(`|`)
+    console.log('| Install Link:')
+    console.log(`| ${process.env.HOST}/install`)
+    console.log(`|`)
+    console.log('| Shopify Admin App:')
+    console.log(`| ${process.env.HOST}/api/auth?shop=${process.env.SHOP}`)
+    console.log(`|`)
   }),
 )

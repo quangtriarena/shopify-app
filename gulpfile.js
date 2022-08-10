@@ -16,6 +16,7 @@ const updateScopes = async () => {
     let envScopes = envContent
       .split('\n')
       .find((item) => item.includes('SCOPES'))
+      .replace(/\s/g, '')
       .replace('SCOPES=', '')
     let shopifyAppTomlScopes = shopifyAppTomlContent
       .split('\n')
