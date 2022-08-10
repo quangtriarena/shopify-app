@@ -51,16 +51,17 @@ const find = async ({ shop, accessToken, limit, pageInfo, order }) => {
   try {
     validateParams({ shop, accessToken })
 
-    let _limit = limit ? (parseInt(limit) >= 0 ? parseInt(limit) : 50) : 50
+    let _limit = limit ? (parseInt(limit) >= 0 ? parseInt(limit) : 20) : 20
 
     let endpoint = `products.json?limit=${_limit}`
     if (pageInfo) {
       endpoint += `&page_info=${pageInfo}`
-    }
-    if (order) {
-      endpoint += `&order=${order}`
     } else {
-      endpoint += `&order=updated_at+desc`
+      if (order) {
+        endpoint += `&order=${order}`
+      } else {
+        endpoint += `&order=updated_at+desc`
+      }
     }
 
     return await apiCaller({

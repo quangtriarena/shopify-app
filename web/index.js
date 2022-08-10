@@ -30,6 +30,8 @@ import { BillingInterval } from './helpers/ensure-billing.js'
 import { AppInstallations } from './app_installations.js'
 
 import webhookRoute from './backend/routes/webhook/index.js'
+import storeSettingRoute from './backend/routes/admin/store_setting.js'
+import productRoute from './backend/routes/admin/product.js'
 
 const USE_ONLINE_TOKENS = false
 const TOP_LEVEL_OAUTH_COOKIE = 'shopify_top_level_oauth'
@@ -101,29 +103,18 @@ export async function createServer(
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: false }))
 
-  applyAuthMiddleware(app, {
-    billing: billingSettings,
-  })
+  // -------------------------------------------
+  /**
+   * STOREFRONT ROUTES
+   */
+  // -------------------------------------------
+
+  applyAuthMiddleware(app, { billing: billingSettings })
 
   webhookRoute(app, Shopify)
 
   // All endpoints after this point will require an active session
-  app.use(
-    '/api/*',
-    verifyRequest(app, {
-      billing: billingSettings,
-    }),
-  )
-
-  app.get('/api/products/count', async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(req, res, app.get('use-online-tokens'))
-    const { Product } = await import(
-      `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
-    )
-
-    const countData = await Product.count({ session })
-    res.status(200).send(countData)
-  })
+  app.use('/api/*', verifyRequest(app, { billing: billingSettings }))
 
   app.get('/api/products/create', async (req, res) => {
     const session = await Shopify.Utils.loadCurrentSession(req, res, app.get('use-online-tokens'))
@@ -139,6 +130,14 @@ export async function createServer(
     }
     res.status(status).send({ success: status === 200, error })
   })
+
+  // -------------------------------------------
+  /**
+   * ADMIN ROUTES
+   */
+  storeSettingRoute(app, Shopify)
+  productRoute(app, Shopify)
+  // -------------------------------------------
 
   // All endpoints after this point will have access to a request.body
   // attribute, as a result of the express.json() middleware

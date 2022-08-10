@@ -60,6 +60,7 @@ export default defineConfig({
   plugins: [react()],
   define: {
     'process.env.SHOPIFY_API_KEY': JSON.stringify(process.env.SHOPIFY_API_KEY),
+    'process.env.BACKEND_URL': JSON.stringify(process.env.BACKEND_URL),
   },
   resolve: {
     preserveSymlinks: true,

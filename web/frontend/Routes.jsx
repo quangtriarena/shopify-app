@@ -1,4 +1,4 @@
-import { Routes as ReactRouterRoutes, Route } from "react-router-dom";
+import { Routes as ReactRouterRoutes, Route } from 'react-router-dom'
 
 /**
  * File-based routing.
@@ -14,32 +14,32 @@ import { Routes as ReactRouterRoutes, Route } from "react-router-dom";
  *
  * @return {Routes} `<Routes/>` from React Router, with a `<Route/>` for each file in `pages`
  */
-export default function Routes({ pages }) {
-  const routes = useRoutes(pages);
+export default function Routes({ pages, appProps }) {
+  const routes = useRoutes(pages)
   const routeComponents = routes.map(({ path, component: Component }) => (
-    <Route key={path} path={path} element={<Component />} />
-  ));
+    <Route key={path} path={path} element={<Component {...appProps} />} />
+  ))
 
-  const NotFound = routes.find(({ path }) => path === "/notFound").component;
+  const NotFound = routes.find(({ path }) => path === '/notFound').component
 
   return (
     <ReactRouterRoutes>
       {routeComponents}
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<NotFound {...appProps} />} />
     </ReactRouterRoutes>
-  );
+  )
 }
 
 function useRoutes(pages) {
   const routes = Object.keys(pages)
     .map((key) => {
       let path = key
-        .replace("./pages", "")
-        .replace(/\.(t|j)sx?$/, "")
+        .replace('./pages', '')
+        .replace(/\.(t|j)sx?$/, '')
         /**
          * Replace /index with /
          */
-        .replace(/\/index$/i, "/")
+        .replace(/\/index$/i, '/')
         /**
          * Only lowercase the first letter. This allows the developer to use camelCase
          * dynamic paths while ensuring their standard routes are normalized to lowercase.
@@ -48,22 +48,22 @@ function useRoutes(pages) {
         /**
          * Convert /[handle].jsx and /[...handle].jsx to /:handle.jsx for react-router-dom
          */
-        .replace(/\[(?:[.]{3})?(\w+?)\]/g, (_match, param) => `:${param}`);
+        .replace(/\[(?:[.]{3})?(\w+?)\]/g, (_match, param) => `:${param}`)
 
-      if (path.endsWith("/") && path !== "/") {
-        path = path.substring(0, path.length - 1);
+      if (path.endsWith('/') && path !== '/') {
+        path = path.substring(0, path.length - 1)
       }
 
       if (!pages[key].default) {
-        console.warn(`${key} doesn't export a default React component`);
+        console.warn(`${key} doesn't export a default React component`)
       }
 
       return {
         path,
         component: pages[key].default,
-      };
+      }
     })
-    .filter((route) => route.component);
+    .filter((route) => route.component)
 
-  return routes;
+  return routes
 }
