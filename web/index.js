@@ -33,6 +33,10 @@ import webhookRoute from './backend/routes/webhook/index.js'
 import storeSettingRoute from './backend/routes/admin/store_setting.js'
 import productRoute from './backend/routes/admin/product.js'
 import billingRoute from './backend/routes/admin/billing.js'
+import backgroundJobRoute from './backend/routes/admin/background_job.js'
+import pupolateRoute from './backend/routes/admin/populate.js'
+import duplicatorRoute from './backend/routes/admin/duplicator.js'
+import submitionRoute from './backend/routes/admin/submition.js'
 
 const USE_ONLINE_TOKENS = false
 const TOP_LEVEL_OAUTH_COOKIE = 'shopify_top_level_oauth'
@@ -139,6 +143,10 @@ export async function createServer(
   storeSettingRoute(app, Shopify)
   productRoute(app, Shopify)
   billingRoute(app, Shopify)
+  backgroundJobRoute(app, Shopify)
+  pupolateRoute(app, Shopify)
+  duplicatorRoute(app, Shopify)
+  submitionRoute(app, Shopify)
   // -------------------------------------------
 
   // All endpoints after this point will have access to a request.body

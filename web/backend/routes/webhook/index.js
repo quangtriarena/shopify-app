@@ -7,7 +7,7 @@ export default function webhookRoute(app, Shopify) {
       const topic = req.headers['x-shopify-topic']
       const { id } = req.body
 
-      console.log(`🚀 ~ webhook ${domain} ${topic} ${id}`)
+      // console.log(`🚀 ~ webhook ${domain} ${topic} ${id}`)
 
       switch (topic) {
         case 'app/uninstalled':

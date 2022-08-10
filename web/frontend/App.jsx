@@ -115,6 +115,18 @@ export default function App(props) {
                           label: 'Products',
                           pathname: '/products',
                         },
+                        {
+                          label: 'History actions',
+                          pathname: '/history-actions',
+                        },
+                        {
+                          label: 'Backup data',
+                          pathname: '/backup',
+                        },
+                        {
+                          label: 'Restore data',
+                          pathname: '/restore',
+                        },
                       ]}
                       secondaryActions={[
                         {

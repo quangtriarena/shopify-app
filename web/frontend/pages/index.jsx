@@ -1,17 +1,52 @@
-import { Card, Page, Layout, TextContainer, Image, Stack, Link, Heading } from '@shopify/polaris'
+import {
+  Card,
+  Page,
+  Layout,
+  TextContainer,
+  Image,
+  Stack,
+  Link,
+  Heading,
+  Button,
+} from '@shopify/polaris'
 import { TitleBar } from '@shopify/app-bridge-react'
 
 import { trophyImage } from '../assets'
 
 import { ProductsCard } from '../components'
 
+import SubmitionApi from '../apis/submition'
+
 import ProductsPage from './products'
 import PlansPage from './plans'
+import HistoryActionsPage from './history-actions'
 
 export default function HomePage(props) {
+  const { actions } = props
+
   if (true) {
     // return <ProductsPage {...props} />
     // return <PlansPage {...props} />
+    // return <HistoryActionsPage {...props} />
+  }
+
+  const handleSubmit = async () => {
+    try {
+      actions.showAppLoading()
+
+      let res = await SubmitionApi.submit()
+      console.log('SubmitionApi res :>> ', res)
+      if (!res.success) {
+        throw res.error
+      }
+
+      actions.showNotify({ message: 'Submition successful!' })
+    } catch (error) {
+      console.log(error)
+      actions.showNotify({ message: error.message, error: true })
+    } finally {
+      actions.hideAppLoading()
+    }
   }
 
   return (
@@ -66,7 +101,10 @@ export default function HomePage(props) {
           </Card>
         </Layout.Section>
         <Layout.Section>
-          <ProductsCard />
+          <ProductsCard {...props} />
+        </Layout.Section>
+        <Layout.Section>
+          <Button onClick={handleSubmit}>Submit test</Button>
         </Layout.Section>
       </Layout>
     </Page>

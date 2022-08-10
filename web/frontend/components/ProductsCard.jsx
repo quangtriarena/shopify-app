@@ -3,8 +3,11 @@ import { Card, Heading, TextContainer, DisplayText, TextStyle } from '@shopify/p
 import { Toast } from '@shopify/app-bridge-react'
 import { useAppQuery, useAuthenticatedFetch } from '../hooks'
 import { useNavigate } from 'react-router-dom'
+import PopulateApi from '../apis/populate'
 
-export function ProductsCard() {
+export function ProductsCard(props) {
+  const { actions } = props
+
   const navigate = useNavigate()
 
   const emptyToastProps = { content: null }
@@ -30,19 +33,39 @@ export function ProductsCard() {
     <Toast {...toastProps} onDismiss={() => setToastProps(emptyToastProps)} />
   )
 
-  const handlePopulate = async () => {
-    setIsLoading(true)
-    const response = await fetch('/api/products/create')
+  // const handlePopulate = async () => {
+  //   setIsLoading(true)
+  //   const response = await fetch('/api/products/create')
 
-    if (response.ok) {
-      await refetchProductCount()
-      setToastProps({ content: '5 products created!' })
-    } else {
-      setIsLoading(false)
-      setToastProps({
-        content: 'There was an error creating products',
-        error: true,
-      })
+  //   if (response.ok) {
+  //     await refetchProductCount()
+  //     setToastProps({ content: '5 products created!' })
+  //   } else {
+  //     setIsLoading(false)
+  //     setToastProps({
+  //       content: 'There was an error creating products',
+  //       error: true,
+  //     })
+  //   }
+  // }
+
+  const handlePopulate = async () => {
+    try {
+      actions.showAppLoading()
+
+      let res = await PopulateApi.create()
+      if (!res.success) {
+        throw res.error
+      }
+
+      actions.showNotify({ message: 'Process is running in background. Waiting for finnish!' })
+
+      navigate('/history-actions', { replace: true })
+    } catch (error) {
+      console.log(error)
+      actions.showNotify({ message: error.message, error: true })
+    } finally {
+      actions.hideAppLoading()
     }
   }
 
@@ -58,10 +81,15 @@ export function ProductsCard() {
         //   loading: isLoading,
         // }}
         primaryFooterAction={{
-          content: 'Products page',
-          onAction: () => navigate('/products'),
+          content: 'Populate 20 products',
+          onAction: handlePopulate,
           loading: isLoading,
         }}
+        // primaryFooterAction={{
+        //   content: 'Products page',
+        //   onAction: () => navigate('/products'),
+        //   loading: isLoading,
+        // }}
       >
         <TextContainer spacing="loose">
           <p>
