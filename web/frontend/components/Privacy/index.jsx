@@ -23,33 +23,31 @@ function Privacy(props) {
   }, [])
 
   return (
-    <div style={{ margin: '2em' }}>
-      <Card sectioned>
-        <Stack vertical spacing="extraLoose">
-          <Stack distribution="equalSpacing">
-            <Stack distribution="trailing">
-              {Boolean(acceptedAt) && (
-                <DisplayText size="small">
-                  Accepted date: {formatDateTime(acceptedAt, 'LLL')}
-                </DisplayText>
-              )}
-            </Stack>
+    <Card sectioned>
+      <Stack vertical alignmen="fill" spacing="extraLoose">
+        <Stack distribution="equalSpacing">
+          <Stack.Item>
+            {Boolean(acceptedAt) && (
+              <DisplayText size="small">
+                Accepted at: {formatDateTime(acceptedAt, 'LLL')}
+              </DisplayText>
+            )}
+          </Stack.Item>
 
-            <Stack distribution="trailing">
-              {onAction && (
-                <Button primary onClick={onAction}>
-                  {acceptedAt ? 'Close' : 'Accept privacy'}
-                </Button>
-              )}
-            </Stack>
+          <Stack distribution="trailing">
+            {onAction && (
+              <Button primary onClick={onAction}>
+                {acceptedAt ? 'Back to Home' : 'Accept privacy'}
+              </Button>
+            )}
           </Stack>
-
-          <div>
-            <DisplayText>PRIVACY POLICY</DisplayText>
-          </div>
         </Stack>
-      </Card>
-    </div>
+
+        <DisplayText>
+          <b>PRIVACY POLICY</b>
+        </DisplayText>
+      </Stack>
+    </Card>
   )
 }
 
