@@ -166,6 +166,12 @@ export async function createServer(
   }
 
   app.use('/*', async (req, res, next) => {
+    // redirect install page
+    if (req.baseUrl.includes('/install')) {
+      const installFilePath = join(process.cwd(), 'public', 'install.html')
+      return res.status(200).set('Content-Type', 'text/html').send(fs.readFileSync(installFilePath))
+    }
+
     const shop = Shopify.Utils.sanitizeShop(req.query.shop)
     if (!shop) {
       res.status(500)

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ArenaCommerce's App Install</title>
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="https://cdn.shopify.com/s/files/1/0446/5626/3319/t/17/assets/favicon_32x32.png?v=21334959988516839671628618120"
+    />
+
+    <style>
+      body {
+        font-family: Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
+          Cantarell, Open Sans, Helvetica Neue, sans-serif;
+        font-size: 16px;
+        line-height: 1.4;
+        font-weight: 400;
+        color: #3c4141;
+      }
+
+      .main {
+        background-color: #ffffff;
+        background-image: url('https://picsum.photos/1366/768');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .install_form {
+        background-color: rgb(247, 247, 247);
+        border-radius: 0.5em;
+        width: 400px;
+        max-width: 400px;
+        margin: 1em;
+        padding: 2em;
+        box-shadow: 0 1.625rem 5rem rgba(0, 0, 0, 0.2), 0 0 0.0625rem rgba(0, 0, 0, 0.2);
+        margin-bottom: 6em;
+      }
+
+      .install_form .title {
+        color: rgb(0, 110, 82);
+        font-size: 1.6em;
+        text-align: center;
+        font-weight: 500;
+        margin-bottom: 3rem;
+      }
+
+      .install_form .form_control {
+        margin-bottom: 1rem;
+      }
+
+      .install_form input[type='text'] {
+        width: 100%;
+        padding: 0.65em;
+        display: inline-block;
+        border: 1px solid #cccccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 1em;
+        margin: 0.3em 0;
+      }
+
+      .install_form input[type='text']::placeholder {
+        color: #bbbbbb;
+      }
+
+      .install_form .error_message {
+        font-size: 0.9em;
+        color: #d82c0d;
+        display: block;
+        visibility: hidden;
+      }
+
+      .install_form button {
+        width: 100%;
+        background-color: rgb(0, 128, 96);
+        color: white;
+        padding: 0.7em 1em;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1em;
+      }
+
+      .install_form button:hover {
+        background-color: rgb(0, 110, 82);
+      }
+    </style>
+
+    <script>
+      window.onFocus = () => {
+        document.getElementById('shop').style.borderColor = '#cccccc'
+
+        let errorEl = document.querySelector('.error_message')
+        if (errorEl) {
+          errorEl.innerHTML = '*'
+          errorEl.style.visibility = 'hidden'
+        }
+      }
+
+      window.onSubmit = () => {
+        try {
+          let shop = document.getElementById('shop').value
+
+          if (!shop) {
+            throw new Error(`Shopify store's URL cannot be blank!`)
+          }
+
+          if (!shop.includes('.myshopify.com')) {
+            throw new Error(`Invalid URL. Example: example.myshopify.com`)
+          }
+
+          let buttonEl = document.querySelector('.install_form button')
+          if (buttonEl) {
+            buttonEl.style.backgroundColor = '#dcdcdc'
+            buttonEl.disabled = true
+          }
+
+          return window.location.replace(`/api/auth?shop=${shop}`)
+        } catch (error) {
+          document.getElementById('shop').style.borderColor = '#d82c0d'
+
+          let errorEl = document.querySelector('.error_message')
+          if (errorEl) {
+            errorEl.innerHTML = error.message
+            errorEl.style.visibility = 'visible'
+          }
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="install_form">
+        <div class="title">ArenaCommerce's App Install</div>
+
+        <div class="form_control">
+          <label for="shop">Enter your Shopify store's URL:</label>
+          <input
+            type="text"
+            id="shop"
+            name="shop"
+            value=""
+            placeholder="example.myshopify.com"
+            class="input input__error"
+            onfocus="window.onFocus()"
+          />
+          <span class="error_message">*</span>
+        </div>
+
+        <div><button onclick="window.onSubmit()">Submit</button></div>
+      </div>
+    </div>
+  </body>
+</html>
