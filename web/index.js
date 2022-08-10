@@ -10,14 +10,16 @@ console.log(`| WEBHOOKS: ${process.env.WEBHOOKS}`)
 console.log(`| API_VERSION: ${process.env.API_VERSION}`)
 console.log(`| PORT: ${process.env.PORT}`)
 console.log(`| BACKEND_PORT: ${process.env.BACKEND_PORT}`)
-console.log(`| SHOP: ${process.env.SHOP}`)
 console.log(`| BACKEND_URL: ${process.env.BACKEND_URL}`)
+console.log(`| SHOP: ${process.env.SHOP}`)
 
 // @ts-check
 import { join } from 'path'
 import fs from 'fs'
 import express from 'express'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
+import bodyParser from 'body-parser'
 import { Shopify, LATEST_API_VERSION } from '@shopify/shopify-api'
 
 import applyAuthMiddleware from './middleware/auth.js'
@@ -26,6 +28,8 @@ import { setupGDPRWebHooks } from './gdpr.js'
 import productCreator from './helpers/product-creator.js'
 import { BillingInterval } from './helpers/ensure-billing.js'
 import { AppInstallations } from './app_installations.js'
+
+import webhookRoute from './backend/routes/webhook/index.js'
 
 const USE_ONLINE_TOKENS = false
 const TOP_LEVEL_OAUTH_COOKIE = 'shopify_top_level_oauth'
@@ -87,30 +91,21 @@ export async function createServer(
   billingSettings = BILLING_SETTINGS,
 ) {
   const app = express()
+
   app.set('top-level-oauth-cookie', TOP_LEVEL_OAUTH_COOKIE)
   app.set('use-online-tokens', USE_ONLINE_TOKENS)
 
+  app.use(cors())
   app.use(cookieParser(Shopify.Context.API_SECRET_KEY))
+
+  app.use(bodyParser.json())
+  app.use(bodyParser.urlencoded({ extended: false }))
 
   applyAuthMiddleware(app, {
     billing: billingSettings,
   })
 
-  // Do not call app.use(express.json()) before processing webhooks with
-  // Shopify.Webhooks.Registry.process().
-  // See https://github.com/Shopify/shopify-api-node/blob/main/docs/usage/webhooks.md#note-regarding-use-of-body-parsers
-  // for more details.
-  app.post('/api/webhooks', async (req, res) => {
-    try {
-      await Shopify.Webhooks.Registry.process(req, res)
-      console.log(`Webhook processed, returned status code 200`)
-    } catch (e) {
-      console.log(`Failed to process webhook: ${e.message}`)
-      if (!res.headersSent) {
-        res.status(500).send(e.message)
-      }
-    }
-  })
+  webhookRoute(app, Shopify)
 
   // All endpoints after this point will require an active session
   app.use(

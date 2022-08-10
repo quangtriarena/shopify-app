@@ -10,8 +10,8 @@ console.log(`| WEBHOOKS: ${process.env.WEBHOOKS}`)
 console.log(`| API_VERSION: ${process.env.API_VERSION}`)
 console.log(`| PORT: ${process.env.PORT}`)
 console.log(`| BACKEND_PORT: ${process.env.BACKEND_PORT}`)
-console.log(`| SHOP: ${process.env.SHOP}`)
 console.log(`| BACKEND_URL: ${process.env.BACKEND_URL}`)
+console.log(`| SHOP: ${process.env.SHOP}`)
 
 import { defineConfig } from 'vite'
 import { dirname } from 'path'

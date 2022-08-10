@@ -2,7 +2,26 @@ import Model from '../models/store_setting.js'
 import ErrorCodes from '../constants/errorCodes.js'
 import BillingMiddleware from '../middlewares/billing.js'
 
+const STATUS = {
+  RUNNING: 'RUNNING',
+  UNINSTALLED: 'UNINSTALLED',
+}
+const ROLE = {
+  GUEST: 'GUEST',
+  MEMBERSHIP: 'MEMBERSHIP',
+  ADMIN: 'ADMIN',
+}
+const APP_PLAN = {
+  BASIC: 'BASIC',
+  PRO: 'PRO',
+  PLUS: 'PLUS',
+}
+
 export default {
+  STATUS,
+  ROLE,
+  APP_PLAN,
+
   count: async () => {
     try {
       return await Model.count()
@@ -81,7 +100,6 @@ export default {
   },
 
   init: async (session) => {
-    console.log('session :>> ', session)
     try {
       let storeSetting = await Model.findOne({ where: { shop: session.shop } })
       if (!storeSetting) {
@@ -106,12 +124,12 @@ export default {
         if (
           storeSetting.accessToken !== session.accessToken ||
           storeSetting.scope !== session.scope ||
-          storeSetting.status !== 'RUNNING'
+          storeSetting.status !== STATUS.RUNNING
         ) {
           storeSetting = await Model.update(
             {
               accessToken: session.accessToken,
-              status: 'RUNNING',
+              status: STATUS.RUNNING,
             },
             {
               where: { id: storeSetting.id },
@@ -124,7 +142,21 @@ export default {
       }
 
       console.log('storeSetting :>> ', storeSetting)
+
       return storeSetting
+    } catch (error) {
+      throw { message: error.message }
+    }
+  },
+
+  getByShop: async (shop) => {
+    try {
+      let storeSetting = await Model.findOne({ where: { shop } })
+      if (!storeSetting) {
+        throw new Error(ErrorCodes.UNAUTHORIZED)
+      }
+
+      return storeSetting.toJSON()
     } catch (error) {
       throw { message: error.message }
     }
@@ -209,23 +241,7 @@ export default {
         }
       }
 
-      console.log('session :>> ')
-      console.log(storeSetting)
-
       return storeSetting
-    } catch (error) {
-      throw { message: error.message }
-    }
-  },
-
-  getByShop: async (shop) => {
-    try {
-      let storeSetting = await Model.findOne({ where: { shop } })
-      if (!storeSetting) {
-        throw new Error(ErrorCodes.UNAUTHORIZED)
-      }
-
-      return storeSetting.toJSON()
     } catch (error) {
       throw { message: error.message }
     }

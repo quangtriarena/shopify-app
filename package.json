@@ -5,17 +5,18 @@
   "license": "UNLICENSED",
   "scripts": {
     "shopify": "shopify",
-    "build": "shopify app build",
-    "dev": "shopify app dev",
+    "build": "gulp && shopify app build",
+    "dev": "gulp && shopify app dev",
     "info": "shopify app info",
     "scaffold": "shopify app scaffold",
     "deploy": "shopify app deploy",
-    "inst": "yarn && cd web/ && yarn && cd frontend/ && yarn",
-    "serve": "cd web/ && yarn serve"
+    "inst": "yarn && cd web/ && yarn && cd frontend/ && yarn && cd ../../",
+    "serve": "gulp && cd web/ && yarn serve"
   },
   "dependencies": {
     "@shopify/app": "3.6.1",
-    "@shopify/cli": "3.6.1"
+    "@shopify/cli": "3.6.1",
+    "gulp": "^4.0.2"
   },
   "author": "ArenaCommerce"
 }

@@ -73,6 +73,9 @@ const getByShop = async (shop) => {
 }
 
 const StoreSettingMiddleware = {
+  STATUS: Repository.STATUS,
+  ROLE: Repository.ROLE,
+  APP_PLAN: Repository.APP_PLAN,
   count,
   find,
   findById,

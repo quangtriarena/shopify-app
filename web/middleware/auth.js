@@ -1,6 +1,7 @@
 import { Shopify } from '@shopify/shopify-api'
 import { gdprTopics } from '@shopify/shopify-api/dist/webhooks/registry.js'
 import StoreSettingMiddleware from '../backend/middlewares/store_setting.js'
+import WebhookMiddleware from '../backend/middlewares/webhook.js'
 
 import ensureBilling from '../helpers/ensure-billing.js'
 import topLevelAuthRedirect from '../helpers/top-level-auth-redirect.js'
@@ -64,23 +65,22 @@ export default function applyAuthMiddleware(
          * Init store setting
          */
         await StoreSettingMiddleware.init(session)
+
+        /**
+         * Register webhooks
+         */
+        process.env.WEBHOOKS.split(',')
+          .filter((item) => item)
+          .forEach((topic) =>
+            WebhookMiddleware.create({
+              shop: session.shop,
+              accessToken: session.accessToken,
+              topic,
+            }),
+          )
       }
 
       const host = Shopify.Utils.sanitizeHost(req.query.host, true)
-
-      const responses = await Shopify.Webhooks.Registry.registerAll({
-        shop: session.shop,
-        accessToken: session.accessToken,
-      })
-
-      Object.entries(responses).map(([topic, response]) => {
-        // The response from registerAll will include errors for the GDPR topics.  These can be safely ignored.
-        // To register the GDPR topics, please set the appropriate webhook endpoint in the
-        // 'GDPR mandatory webhooks' section of 'App setup' in the Partners Dashboard.
-        if (!response.success && !gdprTopics.includes(topic)) {
-          console.log(`Failed to register ${topic} webhook: ${response.result.errors[0].message}`)
-        }
-      })
 
       // If billing is required, check if the store needs to be charged right away to minimize the number of redirects.
       let redirectUrl = `/?shop=${encodeURIComponent(session.shop)}&host=${encodeURIComponent(
