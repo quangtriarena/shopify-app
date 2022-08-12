@@ -3,46 +3,75 @@ import StoreSettingMiddleware from './store_setting.js'
 import DuplicatorActions from './duplicator_actions.js'
 import ProductMiddleware from './product.js'
 import csvtojson from 'csvtojson'
+import DuplicatorPackageMiddleware from './duplicator_package.js'
 
 const LIMIT_PER_PROCESS = 100
 
 const create = async (job) => {
   const { shop, backgroundJobId } = job.data
 
-  let res = null
-  let backgroundJob = null
-  let storeSetting = null
-
-  let result = []
-
   try {
-    // get background job
-    backgroundJob = await BackgroundJobMiddleware.findById(backgroundJobId)
+    // get backgroundJob
+    let backgroundJob = await BackgroundJobMiddleware.findById(backgroundJobId)
 
-    // check background job is running
+    // check backgroundJob is running
     if (!['PENDING', 'RUNNING'].includes(backgroundJob.status)) {
       console.log(`| <<< PROCESS HAS BEEN ${backgroundJob.status} >>>`)
       return
     }
 
-    // update background job status
+    // update backgroundJob
     if (backgroundJob.status === 'PENDING') {
       backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
         status: 'RUNNING',
       })
     }
 
-    // get store setting
-    storeSetting = await StoreSettingMiddleware.getByShop(shop)
+    // get storeSetting
+    let storeSetting = await StoreSettingMiddleware.getByShop(shop)
     const { accessToken } = storeSetting
 
     // validate app plan
 
+    // get originalShop
+    let originalShop = await StoreSettingMiddleware.findByUuid(job.data.uuid)
+      .then((res) => res)
+      .catch((err) => {
+        throw { message: 'Original store not found' }
+      })
+
+    // get duplicatorPackage
+    let duplicatorPackage = await DuplicatorPackageMiddleware.findById(job.data.package)
+      .then((res) => res)
+      .catch((err) => {
+        throw { message: 'Package not found' }
+      })
+
+    // check package owner
+    if (duplicatorPackage.shop !== originalShop.shop) {
+      throw { message: 'Package permission denied' }
+    }
+
+    // check package already to use
+    if (!duplicatorPackage.result) {
+      throw { message: 'Package is not ready to use' }
+    }
+
+    // download and unzip files
+    const { files } = await DuplicatorActions.downloadAndUnzipFile(
+      duplicatorPackage.result.Location,
+    )
+
+    console.log(`Import files:`)
+    console.log(files.map((file) => file.name))
+
+    let result = []
+
     // process
-    for (let ii = 0, iiLeng = job.data.files.length; ii < iiLeng; ii++) {
+    for (let ii = 0, iiLeng = files.length; ii < iiLeng; ii++) {
       console.log(`[${ii + 1}/${iiLeng}] run`)
 
-      const { type, content } = job.data.files[ii]
+      const { type, content } = files[ii]
 
       let jsonData = await csvtojson().fromString(content)
       console.log(`| json data length ${jsonData.length}`)
@@ -68,7 +97,7 @@ const create = async (job) => {
         console.log(`\t[${i + 1}/${leng}] completed`)
       }
 
-      // update background job
+      // update backgroundJob
       backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
         status: 'RUNNING',
         progress: Math.ceil(((ii + 1) / iiLeng) * 100),
@@ -77,14 +106,14 @@ const create = async (job) => {
       console.log(`[${ii + 1}/${iiLeng}] completed`)
     }
 
-    // update background job
+    // update backgroundJob
     backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
       status: 'COMPLETED',
       progress: 100,
       result: result ? JSON.stringify(result) : null,
     })
   } catch (error) {
-    // update background job
+    // update backgroundJob
     backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
       status: 'FAILED',
       message: error.message,

@@ -18,12 +18,12 @@ const ResourceFormData = {
   count: {
     type: 'select',
     label: 'Count',
-    value: '5',
+    value: '10',
     error: '',
     required: true,
     validate: {},
     options: [
-      { label: '5 (test)', value: '5' },
+      { label: '10 (test)', value: '10' },
       { label: '20', value: '20' },
       { label: '50', value: '50' },
       { label: '100', value: '100' },
@@ -44,13 +44,13 @@ const initFormData = {
   resourceTypes: {
     type: 'multiple-select',
     label: 'Select resources',
-    value: [...ResourceTypes],
+    value: [],
     error: '',
     required: true,
     validate: {},
     options: [...ResourceTypes].map((item) => ({ label: item.replace(/_/g, ' '), value: item })),
   },
-  resources: [...ResourceListFormData],
+  resources: [],
 }
 
 function ExportForm(props) {
@@ -94,7 +94,7 @@ function ExportForm(props) {
         resources: formData.resources.map((item) => {
           let obj = {}
           Object.keys(item).forEach((key) =>
-            item[key].value ? (obj[key] = item[key].value) : null
+            item[key].value ? (obj[key] = item[key].value) : null,
           )
           return obj
         }),

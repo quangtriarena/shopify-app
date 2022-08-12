@@ -7,6 +7,7 @@ import MySkeletonPage from '../../components/MySkeletonPage'
 import Table from './Table'
 import ConfirmDelete from './ConfirmDelete'
 import { RefreshMinor } from '@shopify/polaris-icons'
+import ConfirmCancel from './ConfirmCancel'
 
 function HistoryActionsPage(props) {
   const { actions } = props
@@ -68,6 +69,29 @@ function HistoryActionsPage(props) {
     }
   }, [backgroundJobs])
 
+  const handleCancel = async (canceled) => {
+    try {
+      actions.showAppLoading()
+
+      let res = await BackgroundJobApi.update(canceled.id, {
+        status: 'CANCELED',
+        message: 'Canceled by user',
+      })
+      if (!res.success) {
+        throw res.error
+      }
+
+      actions.showNotify({ message: 'Canceled' })
+
+      getBackgroundJobs(location.search)
+    } catch (error) {
+      console.log(error)
+      actions.showNotify({ message: error.message, error: true })
+    } finally {
+      actions.hideAppLoading()
+    }
+  }
+
   const handleDelete = async (deleted) => {
     try {
       actions.showAppLoading()
@@ -94,11 +118,7 @@ function HistoryActionsPage(props) {
 
   return (
     <Stack vertical alignment="fill">
-      <AppHeader
-        {...props}
-        title="History actions"
-        onBack={() => navigate('/', { replace: true })}
-      />
+      <AppHeader {...props} title="History actions" onBack={() => navigate('/')} />
 
       <Card>
         <Card.Section>
@@ -126,6 +146,16 @@ function HistoryActionsPage(props) {
           </Stack>
         </Card.Section>
       </Card>
+
+      {canceled && (
+        <ConfirmCancel
+          onDiscard={() => setCanceled(null)}
+          onSubmit={() => {
+            handleCancel(canceled)
+            setCanceled(null)
+          }}
+        />
+      )}
 
       {deleted && (
         <ConfirmDelete

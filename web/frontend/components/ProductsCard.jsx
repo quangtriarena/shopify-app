@@ -60,7 +60,7 @@ export function ProductsCard(props) {
 
       actions.showNotify({ message: 'Process is running in background. Waiting for finnish!' })
 
-      navigate('/history-actions', { replace: true })
+      navigate('/history-actions')
     } catch (error) {
       console.log(error)
       actions.showNotify({ message: error.message, error: true })

@@ -1,16 +1,25 @@
-import Model from '../models/background_job.js'
+import Model from '../models/duplicator_package.js'
 import ErrorCodes from '../constants/errorCodes.js'
 
-const STATUS = {
-  PENDING: 'PENDING',
-  RUNNING: 'RUNNING',
-  COMPLETED: 'COMPLETED',
-  FAILED: 'FAILED',
-  CANCELED: 'CANCELED',
-}
-
 export default {
-  STATUS,
+  getAll: async (shop) => {
+    try {
+      let where = { shop }
+
+      let filter = {
+        where,
+        limit: 1000,
+        offset: 0,
+        order: [['updatedAt', 'DESC']],
+      }
+
+      let items = await Model.findAll(filter)
+
+      return items
+    } catch (error) {
+      throw { message: error.message }
+    }
+  },
 
   find: async ({ page, limit, shop }) => {
     try {

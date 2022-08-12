@@ -67,6 +67,19 @@ export default {
     }
   },
 
+  findByUuid: async (uuid) => {
+    try {
+      let entry = await Model.findOne({ where: { uuid } })
+      if (!entry) {
+        throw new Error(ErrorCodes.NOT_FOUND)
+      }
+
+      return entry.toJSON()
+    } catch (error) {
+      throw { message: error.message }
+    }
+  },
+
   create: async (data) => {
     try {
       const created = await Model.create(data)

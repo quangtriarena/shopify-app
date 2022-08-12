@@ -46,14 +46,14 @@ export default function backgroundJobRoute(app, Shopify) {
 
       const { id } = req.params
 
-      const entry = await BackgroundJobMiddleware.findById({ id })
+      const entry = await BackgroundJobMiddleware.findById(id)
 
       // check session
       if (entry.shop !== shop) {
         throw new Error(ErrorCodes.NOT_PERMISSIONED)
       }
 
-      const data = await BackgroundJobMiddleware.update({ id, data: req.body })
+      const data = await BackgroundJobMiddleware.update(id, req.body)
 
       return ResponseHandler.success(res, data)
     } catch (error) {

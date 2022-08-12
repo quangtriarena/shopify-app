@@ -120,12 +120,12 @@ export default function App(props) {
                           pathname: '/history-actions',
                         },
                         {
-                          label: 'Backup data',
-                          pathname: '/backup',
+                          label: 'Export data',
+                          pathname: '/export-data',
                         },
                         {
-                          label: 'Restore data',
-                          pathname: '/restore',
+                          label: 'Import data',
+                          pathname: '/import-data',
                         },
                       ]}
                       secondaryActions={[

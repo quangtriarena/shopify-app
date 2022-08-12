@@ -3,6 +3,7 @@ import BackgroundJobMiddleware from './background_job.js'
 import PopulateMiddleware from './populate.js'
 import DuplicatorExportMiddleware from './duplicator_export.js'
 import DuplicatorImportMiddleware from './duplicator_import.js'
+import DuplicatorPackageMiddleware from './duplicator_package.js'
 
 let MyQueues = []
 
@@ -65,11 +66,23 @@ const createNewQueue = (queueName) => {
   worker.on('completed', async (job) => {
     console.log(`${queueName} ${job.data.__type} ${job.id} has completed`)
 
-    // get background job
     console.log(`|---------------------------------------------------`)
+    console.log(`${queueName} ${job.data.__type} ${job.id} backgroundJob result:`)
+
+    // get background job
     let backgroundJob = await BackgroundJobMiddleware.findById(job.data.backgroundJobId)
-    console.log(`${queueName} ${job.data.__type} ${job.id} result:`)
+    console.log('backgroundJob:')
     console.log(backgroundJob)
+
+    // get duplicator package
+    if (job.data.duplicatorPackageId) {
+      let duplicatorPackage = await DuplicatorPackageMiddleware.findById(
+        job.data.duplicatorPackageId,
+      )
+      console.log('duplicatorPackage:')
+      console.log(duplicatorPackage)
+    }
+
     console.log(`|---------------------------------------------------`)
 
     // remove job

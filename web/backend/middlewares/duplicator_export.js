@@ -7,48 +7,53 @@ import SmartCollectionMiddleware from './smart_collection.js'
 import AdminZipMiddleware from './adm_zip.js'
 import fs from 'fs'
 import AwsMiddleware from './aws.js'
+import DuplicatorPackageMiddleware from './duplicator_package.js'
 
 const LIMIT_PER_PROCESS = 100
 
 const create = async (job) => {
-  const { shop, backgroundJobId } = job.data
-
-  const filename = DuplicatorActions.generatePackageName(shop)
-  const rootDir = `./temp/`
-  const filepath = rootDir + filename
-
-  let res = null
-  let backgroundJob = null
-  let storeSetting = null
-
-  let result = { filepath }
+  const { shop, backgroundJobId, duplicatorPackageId } = job.data
 
   try {
-    // get background job
-    backgroundJob = await BackgroundJobMiddleware.findById(backgroundJobId)
+    const filename = DuplicatorActions.generatePackageName(shop)
+    const rootDir = `./temp/`
+    const filepath = rootDir + filename
 
-    // check background job is running
+    // get backgroundJob
+    let backgroundJob = await BackgroundJobMiddleware.findById(backgroundJobId)
+
+    // check backgroundJob is running
     if (!['PENDING', 'RUNNING'].includes(backgroundJob.status)) {
       console.log(`| <<< PROCESS HAS BEEN ${backgroundJob.status} >>>`)
       return
     }
 
-    // update background job status
+    // update backgroundJob
     if (backgroundJob.status === 'PENDING') {
       backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
         status: 'RUNNING',
       })
     }
 
-    // get store setting
-    storeSetting = await StoreSettingMiddleware.getByShop(shop)
+    // get storeSetting
+    let storeSetting = await StoreSettingMiddleware.getByShop(shop)
     const { accessToken } = storeSetting
 
     // validate app plan
 
+    // get duplicatorPackage
+    let duplicatorPackage = await DuplicatorPackageMiddleware.findById(duplicatorPackageId)
+
+    // update duplicatorPackage
+    duplicatorPackage = await DuplicatorPackageMiddleware.update(duplicatorPackageId, {
+      result: null,
+    })
+
     // create zip file
     await AdminZipMiddleware.create(filepath)
     console.log(`zip file created ${filepath}`)
+
+    let result = null
 
     // process
     for (let ii = 0, iiLeng = job.data.resources.length; ii < iiLeng; ii++) {
@@ -133,15 +138,20 @@ const create = async (job) => {
 
     result = uploaded
 
-    // update background job
+    // update backgroundJob
     backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
       status: 'COMPLETED',
       progress: 100,
       result: result ? JSON.stringify(result) : null,
     })
+
+    // update duplicatorPackage
+    duplicatorPackage = await DuplicatorPackageMiddleware.update(duplicatorPackageId, {
+      result: result ? JSON.stringify(result) : null,
+    })
   } catch (error) {
-    // update background job
-    backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
+    // update backgroundJob
+    await BackgroundJobMiddleware.update(backgroundJobId, {
       status: 'FAILED',
       message: error.message,
     })
