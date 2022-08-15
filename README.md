@@ -225,35 +225,35 @@ pnpm dev --tunnel-url https://tunnel-url:3000
 
 ## STEP-BY-STEP
 
-- Init `.env` file and edit environment
+Step 1: Init `.env` file and edit environment
 
-- Install dependencies
+Step 2: Install dependencies
 
 ```shell
 yarn install_dependencies
 ```
 
-- Run ngrok
+Step 3: Run ngrok
 
 ```shell
 ngrok http --subdomain=your_domain --region=ap 5000
 ```
 
-- Run source
+Step 4: Run source
 
-with generate new app:
+- with generate new app:
 
 ```shell
 yarn dev --tunnel-url=https://your_domain.ap.ngrok.io:5000 --reset
 ```
 
-with dev mode:
+- with dev mode:
 
 ```shell
 yarn dev --tunnel-url=https://your_domain.ap.ngrok.io:5000
 ```
 
-with serve mode:
+- with serve mode:
 
 ```shell
 yarn build

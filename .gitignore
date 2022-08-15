@@ -1,6 +1,7 @@
 # Environment Configuration
 .env
 .env.development
+.env.production
 
 # Dependency directory
 node_modules
