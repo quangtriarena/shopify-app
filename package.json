@@ -13,7 +13,8 @@
     "install_dependencies": "yarn && cd web/ && yarn && cd frontend/ && yarn && cd ../../",
     "serve": "cd web/ && yarn serve",
     "pm2:start": "yarn build && pm2 start ecosystem.config.js --env production",
-    "pm2:restart": "pm2 stop 0 && yarn build && pm2 restart ecosystem.config.js --env production"
+    "pm2:restart": "pm2 stop 0 && yarn build && pm2 restart ecosystem.config.js --env production",
+    "git:push": "git add . && git commit -m \"update code\" && git push origin master"
   },
   "dependencies": {
     "@shopify/app": "3.6.1",
