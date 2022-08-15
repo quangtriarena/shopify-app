@@ -24,9 +24,9 @@ const findById = async (id) => {
   }
 }
 
-const findOne = async (uuid) => {
+const findOne = async (where) => {
   try {
-    return await Repository.findOne(uuid)
+    return await Repository.findOne(where)
   } catch (error) {
     throw error
   }
