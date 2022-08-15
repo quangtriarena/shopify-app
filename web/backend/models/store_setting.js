@@ -61,7 +61,8 @@ const Model = PostgresSequelize.define('store_settings', {
 Model.prototype.toJSON = function () {
   let values = Object.assign({}, this.get())
 
-  values.billings = values.billings ? JSON.parse(values.billings) : null
+  values.billings =
+    values.billings && typeof values.billings === 'string' ? JSON.parse(values.billings) : null
 
   return values
 }
