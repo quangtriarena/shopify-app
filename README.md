@@ -159,25 +159,23 @@ We fixed this issue with v3.4.0 of the CLI, so after updating it, you can make t
 1. Change the definition `hmrConfig` object to be:
 
    ```js
-   const host = process.env.HOST
-     ? process.env.HOST.replace(/https?:\/\//, "")
-     : "localhost";
+   const host = process.env.HOST ? process.env.HOST.replace(/https?:\/\//, '') : 'localhost'
 
-   let hmrConfig;
-   if (host === "localhost") {
+   let hmrConfig
+   if (host === 'localhost') {
      hmrConfig = {
-       protocol: "ws",
-       host: "localhost",
+       protocol: 'ws',
+       host: 'localhost',
        port: 64999,
        clientPort: 64999,
-     };
+     }
    } else {
      hmrConfig = {
-       protocol: "wss",
+       protocol: 'wss',
        host: host,
        port: process.env.FRONTEND_PORT,
        clientPort: 443,
-     };
+     }
    }
    ```
 
@@ -224,3 +222,42 @@ pnpm dev --tunnel-url https://tunnel-url:3000
 - [App authentication](https://shopify.dev/apps/auth)
 - [Shopify CLI](https://shopify.dev/apps/tools/cli)
 - [Shopify API Library documentation](https://github.com/Shopify/shopify-api-node/tree/main/docs)
+
+````
+
+## Start source
+
+Init `.env` file
+
+Install dependencies
+
+```shell
+yarn install_dependencies
+````
+
+Run ngrok
+
+```shell
+ngrok http --subdomain=your_domain --region=ap 5000
+```
+
+Run source
+
+with generate new app:
+
+```shell
+yarn dev --tunnel-url=https://your_domain.ap.ngrok.io:5000 --reset
+```
+
+with dev mode:
+
+```shell
+yarn dev --tunnel-url=https://your_domain.ap.ngrok.io:5000
+```
+
+with serve mode:
+
+```shell
+yarn build
+yarn serve
+```
