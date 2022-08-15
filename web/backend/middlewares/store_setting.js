@@ -24,9 +24,9 @@ const findById = async (id) => {
   }
 }
 
-const findByUuid = async (uuid) => {
+const findOne = async (uuid) => {
   try {
-    return await Repository.findByUuid(uuid)
+    return await Repository.findOne(uuid)
   } catch (error) {
     throw error
   }
@@ -87,7 +87,7 @@ const StoreSettingMiddleware = {
   count,
   find,
   findById,
-  findByUuid,
+  findOne,
   create,
   update,
   // delete: _delete,
