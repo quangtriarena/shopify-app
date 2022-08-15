@@ -57,8 +57,8 @@ function CreateForm(props) {
     /**
      * test
      */
-    _formData.title.value = `Sample product - ${Date.now()}`
-    _formData.body_html.value = `Sample product - ${Date.now()}`
+    _formData.title.value = `Sample product`
+    _formData.body_html.value = `Sample product`
 
     if (created.id) {
       Array.from(['title', 'body_html']).map(
