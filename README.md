@@ -223,9 +223,9 @@ pnpm dev --tunnel-url https://tunnel-url:3000
 - [Shopify CLI](https://shopify.dev/apps/tools/cli)
 - [Shopify API Library documentation](https://github.com/Shopify/shopify-api-node/tree/main/docs)
 
-## Start source
+## STEP-BY-STEP
 
-- Init `.env` file
+- Init `.env` file and edit environment
 
 - Install dependencies
 
