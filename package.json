@@ -10,6 +10,7 @@
     "info": "shopify app info",
     "scaffold": "shopify app scaffold",
     "deploy": "shopify app deploy",
+    "remove_dependencies": "rm -rf node_modules/ yarn.lock && cd web/ && rm -rf node_modules/ yarn.lock && cd frontend/ && rm -rf node_modules/ yarn.lock && cd ../../",
     "install_dependencies": "yarn && cd web/ && yarn && cd frontend/ && yarn && cd ../../",
     "serve": "cd web/ && yarn serve",
     "pm2:start": "yarn build && pm2 start ecosystem.config.js --env production",
