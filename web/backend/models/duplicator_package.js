@@ -12,11 +12,19 @@ const Model = PostgresSequelize.define('duplicator_package', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  status: {
+    type: DataTypes.ENUM('PENDING', 'RUNNING', 'COMPLETED', 'FAILED', 'CANCELED'),
+    defaultValue: 'PENDING',
+  },
   data: {
     type: DataTypes.JSON,
     defaultValue: null,
   },
   result: {
+    type: DataTypes.JSON,
+    defaultValue: null,
+  },
+  log: {
     type: DataTypes.JSON,
     defaultValue: null,
   },
@@ -32,6 +40,6 @@ Model.prototype.toJSON = function () {
   return values
 }
 
-Model.sync()
+Model.sync({ force: true })
 
 export default Model

@@ -4,6 +4,37 @@ This is a template for building a [Shopify app](https://shopify.dev/apps/getting
 
 Rather than cloning this repo, you can use your preferred package manager and the Shopify CLI with [these steps](#installing-the-template).
 
+## STEP-BY-STEP
+
+Step 1: Init `.env` file and edit environment
+
+Step 2: Install dependencies
+
+```shell
+yarn install_dependencies
+```
+
+Step 3: Run ngrok
+
+```shell
+ngrok http --subdomain=your_domain --region=ap 5000
+```
+
+Step 4: Run source
+
+- Dev mode:
+
+```shell
+yarn dev --tunnel-url=https://your_domain.ap.ngrok.io:5000
+```
+
+- Serve mode:
+
+```shell
+yarn build
+yarn serve
+```
+
 ## Benefits
 
 Shopify apps are built on a variety of Shopify tools to create a great merchant experience. The [create an app](https://shopify.dev/apps/getting-started/create) tutorial in our developer documentation will guide you through creating a Shopify app using this template.

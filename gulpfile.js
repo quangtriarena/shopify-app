@@ -1,6 +1,5 @@
 const fs = require('fs')
 
-// console.log('process.cwd() :>> ', process.cwd())
 
 /**
  * Update shopify scopes from .env file into shopify.app.toml file

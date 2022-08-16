@@ -35,17 +35,23 @@ const Model = PostgresSequelize.define('background_jobs', {
     type: DataTypes.JSON,
     defaultValue: null,
   },
+  log: {
+    type: DataTypes.JSON,
+    defaultValue: null,
+  },
 })
 
 Model.prototype.toJSON = function () {
   let values = Object.assign({}, this.get())
 
-  values.data = values.data ? JSON.parse(values.data) : null
-  values.result = values.result ? JSON.parse(values.result) : null
+  values.data = values.data && typeof values.data === 'string' ? JSON.parse(values.data) : null
+  values.result =
+    values.result && typeof values.result === 'string' ? JSON.parse(values.result) : null
+  values.log = values.log && typeof values.log === 'string' ? JSON.parse(values.log) : null
 
   return values
 }
 
-Model.sync()
+Model.sync({ force: true })
 
 export default Model
