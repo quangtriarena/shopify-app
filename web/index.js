@@ -200,10 +200,10 @@ createServer().then(({ app }) =>
     console.log('+                                  +')
     console.log('++++++++++++++++++++++++++++++++++++')
     console.log(`|`)
-    console.log('| Install Link:')
+    console.log('| [SERVE] Install:')
     console.log(`| ${process.env.HOST}/install`)
     console.log(`|`)
-    console.log('| Shopify Admin App:')
+    console.log('| [DEV] Shopify App:')
     console.log(`| ${process.env.HOST}/api/auth?shop=${process.env.SHOP}`)
     console.log(`|`)
   }),
