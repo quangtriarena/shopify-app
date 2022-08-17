@@ -1,7 +1,6 @@
 {
   "name": "arena-new-app",
   "version": "1.0.0",
-  "private": true,
   "main": "web/index.js",
   "license": "UNLICENSED",
   "scripts": {
