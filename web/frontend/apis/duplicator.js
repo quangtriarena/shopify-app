@@ -1,5 +1,9 @@
 import apiCaller from '../helpers/apiCaller'
 
+const getPackages = async () => {
+  return await apiCaller(`/api/duplicator-packages`)
+}
+
 const checkCode = async (data) => {
   return await apiCaller(`/api/duplicator-check-code`, 'POST', data)
 }
@@ -20,6 +24,6 @@ const _import = async (data) => {
   })
 }
 
-const DuplicatorApi = { checkCode, export: _export, import: _import }
+const DuplicatorApi = { getPackages, checkCode, export: _export, import: _import }
 
 export default DuplicatorApi

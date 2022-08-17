@@ -4,6 +4,7 @@ import DuplicatorActions from '../../middlewares/duplicator_actions.js'
 import BullmqBackgroundJobMiddleware from '../../middlewares/bullmq_background_job.js'
 import ProductMiddleware from '../../middlewares/product.js'
 import fs from 'fs'
+import DuplicatorPackageMiddleware from '../../middlewares/duplicator_package.js'
 
 export default function submitionRoute(app, Shopify) {
   app.get('/api/submition', async (req, res) => {
@@ -15,22 +16,6 @@ export default function submitionRoute(app, Shopify) {
       const { shop, accessToken } = session
 
       let data = null
-
-      let content = await fs.readFileSync('./temp/47ae3272afc321e12589b6fd77215f29')
-      content = Buffer.from(content).toString('base64')
-
-      let product = {}
-      product.title = 'Burton Custom Freestyle 151'
-      product.body_html = '<strong>Good snowboard!</strong>'
-      product.vendor = 'Burton'
-      product.product_type = 'Snowboard'
-      product.images = [
-        {
-          attachment: content,
-        },
-      ]
-
-      data = await ProductMiddleware.create({ shop, accessToken, data: { product } })
 
       console.log('/api/submition data :>> ', data)
 

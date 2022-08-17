@@ -59,7 +59,7 @@ export default function HomePage(props) {
         </Stack.Item>
       </Stack>
 
-      {/* <Button onClick={handleSubmit}>Submit test</Button> */}
+      <Button onClick={handleSubmit}>Submit test</Button>
     </Stack>
   )
 }

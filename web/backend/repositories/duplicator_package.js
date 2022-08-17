@@ -15,6 +15,8 @@ export default {
 
       let items = await Model.findAll(filter)
 
+      items = items.map((item) => item.toJSON())
+
       return items
     } catch (error) {
       throw { message: error.message }

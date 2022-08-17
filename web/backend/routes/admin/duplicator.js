@@ -4,8 +4,23 @@ import ResponseHandler from '../../helpers/responseHandler.js'
 import BullmqBackgroundJobMiddleware from '../../middlewares/bullmq_background_job.js'
 import DuplicatoreMiddleware from '../../middlewares/duplicator.js'
 import DuplicatorActions from '../../middlewares/duplicator_actions.js'
+import DuplicatorPackageMiddleware from '../../middlewares/duplicator_package.js'
 
 export default function duplicatorRoute(app, Shopify) {
+  app.get('/api/duplicator-packages', async (req, res) => {
+    try {
+      const session = await verifyToken(req, res, app, Shopify)
+      const { shop, accessToken } = session
+
+      let data = await DuplicatorPackageMiddleware.getAll(shop)
+
+      return ResponseHandler.success(res, data)
+    } catch (error) {
+      console.log('/api/duplicator-check-code error :>> ', error.message)
+      return ResponseHandler.error(res, error)
+    }
+  })
+
   app.post('/api/duplicator-check-code', async (req, res) => {
     try {
       const session = await verifyToken(req, res, app, Shopify)
