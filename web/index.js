@@ -1,17 +1,17 @@
 import dotenv from 'dotenv'
 dotenv.config({ path: './../.env' })
 
-console.log('WEB PROCESS')
-console.log(`| SHOPIFY_API_KEY: ${process.env.SHOPIFY_API_KEY}`)
-console.log(`| SHOPIFY_API_SECRET: ${process.env.SHOPIFY_API_SECRET}`)
-console.log(`| HOST: ${process.env.HOST}`)
-console.log(`| SCOPES: ${process.env.SCOPES}`)
-console.log(`| WEBHOOKS: ${process.env.WEBHOOKS}`)
-console.log(`| API_VERSION: ${process.env.API_VERSION}`)
-console.log(`| PORT: ${process.env.PORT}`)
-console.log(`| BACKEND_PORT: ${process.env.BACKEND_PORT}`)
-console.log(`| BACKEND_URL: ${process.env.BACKEND_URL}`)
-console.log(`| SHOP: ${process.env.SHOP}`)
+// console.log('WEB PROCESS')
+// console.log(`| SHOPIFY_API_KEY: ${process.env.SHOPIFY_API_KEY}`)
+// console.log(`| SHOPIFY_API_SECRET: ${process.env.SHOPIFY_API_SECRET}`)
+// console.log(`| HOST: ${process.env.HOST}`)
+// console.log(`| SCOPES: ${process.env.SCOPES}`)
+// console.log(`| WEBHOOKS: ${process.env.WEBHOOKS}`)
+// console.log(`| API_VERSION: ${process.env.API_VERSION}`)
+// console.log(`| PORT: ${process.env.PORT}`)
+// console.log(`| BACKEND_PORT: ${process.env.BACKEND_PORT}`)
+// console.log(`| BACKEND_URL: ${process.env.BACKEND_URL}`)
+// console.log(`| SHOP: ${process.env.SHOP}`)
 
 // @ts-check
 import { join } from 'path'
@@ -33,6 +33,8 @@ import webhookRoute from './backend/routes/webhook/index.js'
 import storeSettingRoute from './backend/routes/admin/store_setting.js'
 import productRoute from './backend/routes/admin/product.js'
 import billingRoute from './backend/routes/admin/billing.js'
+import submitionRoute from './backend/routes/admin/submition.js'
+import uploadRoute from './backend/routes/admin/upload.js'
 
 const USE_ONLINE_TOKENS = false
 const TOP_LEVEL_OAUTH_COOKIE = 'shopify_top_level_oauth'
@@ -101,8 +103,8 @@ export async function createServer(
   app.use(cors())
   app.use(cookieParser(Shopify.Context.API_SECRET_KEY))
 
-  app.use(bodyParser.json())
-  app.use(bodyParser.urlencoded({ extended: false }))
+  app.use(bodyParser.json({ limit: '50mb' }))
+  app.use(bodyParser.urlencoded({ extended: false, limit: '50mb', parameterLimit: 50000 }))
 
   // -------------------------------------------
   /**
@@ -139,6 +141,8 @@ export async function createServer(
   storeSettingRoute(app, Shopify)
   productRoute(app, Shopify)
   billingRoute(app, Shopify)
+  submitionRoute(app, Shopify)
+  uploadRoute(app, Shopify)
   // -------------------------------------------
 
   // All endpoints after this point will have access to a request.body

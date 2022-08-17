@@ -51,7 +51,7 @@ export default function productRoute(app, Shopify) {
       const session = await verifyToken(req, res, app, Shopify)
       const { shop, accessToken } = session
 
-      const data = await ProductMiddleware.create({ shop, accessToken, data: req.body })
+      let data = await ProductMiddleware.create({ shop, accessToken, data: req.body })
 
       return ResponseHandler.success(res, data)
     } catch (error) {

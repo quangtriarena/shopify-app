@@ -20,7 +20,9 @@
     "@shopify/app": "3.6.1",
     "@shopify/cli": "3.6.1",
     "dotenv": "^16.0.1",
-    "gulp": "^4.0.2"
+    "gulp": "^4.0.2",
+    "query-string": "^7.1.1",
+    "react-froala-wysiwyg": "^4.0.13"
   },
   "author": "ArenaCommerce"
 }

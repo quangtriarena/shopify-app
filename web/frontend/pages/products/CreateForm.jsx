@@ -3,6 +3,8 @@ import { Button, Card, Stack, TextField } from '@shopify/polaris'
 import { useEffect, useState } from 'react'
 import AppHeader from '../../components/AppHeader'
 import FormValidate from '../../helpers/formValidate'
+import MyDropZoneMultiple from '../../components/MyDropZoneMultiple'
+import FormControl from '../../components/FormControl'
 
 CreateForm.propTypes = {
   created: PropTypes.object,
@@ -31,6 +33,7 @@ const initialFormData = {
     },
     autoFocus: true,
   },
+
   body_html: {
     type: 'text',
     label: 'Description',
@@ -43,13 +46,35 @@ const initialFormData = {
       minlength: [2, 'Too short!'],
     },
     multiline: 6,
+    autoFocus: true,
   },
+
+  images: {
+    type: 'file',
+    label: 'Images Products',
+    value: [],
+    originValue: [],
+    error: '',
+    validate: {},
+    allowMultiple: true,
+  },
+
+  // vendor: {
+  //   type: 'select',
+  //   label: 'Vendor',
+  //   value: '',
+  //   error: '',
+  //   validate: {},
+  //   options: [{ label: 'Select a vendor', value: '' }],
+  // },
 }
 
 function CreateForm(props) {
   const { actions, created, onDiscard, onSubmit } = props
 
   const [formData, setFormData] = useState(initialFormData)
+
+  useEffect(() => console.log('formData', formData), [formData])
 
   useEffect(() => {
     let _formData = JSON.parse(JSON.stringify(initialFormData))
@@ -71,7 +96,10 @@ function CreateForm(props) {
 
   const handleChange = (name, value) => {
     let _formData = JSON.parse(JSON.stringify(formData))
+
+    Array.from(['images']).forEach((key) => (_formData[key] = formData[key]))
     _formData[name] = { ..._formData[name], value, error: '' }
+
     setFormData(_formData)
   }
 
@@ -80,6 +108,7 @@ function CreateForm(props) {
       const { valid, data } = FormValidate.validateForm(formData)
 
       if (valid) {
+        data['images'].value = formData['images'].value
         onSubmit(data)
       } else {
         setFormData(data)
@@ -105,10 +134,24 @@ function CreateForm(props) {
       <Stack.Item>
         <Card sectioned>
           <Stack vertical alignment="fill">
-            <TextField {...formData.title} onChange={(value) => handleChange('title', value)} />
-            <TextField
-              {...formData.body_html}
+            <FormControl
+              {...formData['title']}
+              onChange={(value) => handleChange('title', value)}
+            />
+
+            <FormControl
+              {...formData['body_html']}
               onChange={(value) => handleChange('body_html', value)}
+            />
+
+            {/* <FormControl
+              {...formData['vendor']}
+              onChange={(value) => handleChange('vendor', value)}
+            /> */}
+
+            <FormControl
+              {...formData['images']}
+              onChange={(value) => handleChange('images', value)}
             />
           </Stack>
         </Card>

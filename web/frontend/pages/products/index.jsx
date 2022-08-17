@@ -18,6 +18,8 @@ import ConfirmDelete from './ConfirmDelete'
 import Table from './Table'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import MySkeletonPage from '../../components/MySkeletonPage'
+import UploadApi from '../../apis/upload'
+import qs from 'query-string'
 
 function ProductsPage(props) {
   const { actions } = props
@@ -51,6 +53,7 @@ function ProductsPage(props) {
   }
 
   useEffect(() => {
+    // console.log('location.search', location.search)
     getProducts(location.search)
   }, [location.search])
 
@@ -80,9 +83,30 @@ function ProductsPage(props) {
     try {
       actions.showAppLoading()
 
-      let data = {
-        title: formData.title.value,
-        body_html: formData.body_html.value,
+      if (formData['images'].value) {
+        let images = await UploadApi.upload(formData['images'].value)
+
+        if (!images.success) {
+          actions.showNotify({ error: true, message: images.error.message })
+        }
+
+        formData['images'].value = [...images.data]
+      }
+
+      let data = {}
+
+      Object.keys(formData)
+        .filter((key) => !['images'].includes(key))
+        .forEach((key) => (formData[key].value ? (data[key] = formData[key].value) : null))
+
+      if (formData['images'].value.length) {
+        data['images'] = formData['images'].value
+
+        data['images'] = data['images'].map((item) => ({
+          attachment: item.content,
+        }))
+      } else {
+        data['images'] = []
       }
 
       let res = null

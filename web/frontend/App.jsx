@@ -98,6 +98,10 @@ export default function App(props) {
                   label: 'Home',
                   destination: '/',
                 },
+                {
+                  label: 'Products',
+                  destination: '/products',
+                },
               ]}
             />
 
@@ -114,6 +118,10 @@ export default function App(props) {
                         {
                           label: 'Products',
                           pathname: '/products',
+                        },
+                        {
+                          label: 'Test Api',
+                          pathname: '/test-api',
                         },
                       ]}
                       secondaryActions={[
