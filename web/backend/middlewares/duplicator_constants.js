@@ -1,4 +1,17 @@
-export const ValidResources = ['product', 'custom_collection', 'smart_collection']
+export const ValidResources = [
+  'product',
+  'custom_collection',
+  'smart_collection',
+  'page',
+  'blog',
+  'shop',
+  'file',
+  'customer',
+  'discount_code',
+  'draft_order',
+  'order',
+  'redirect',
+]
 
 export const ProductFields = [
   'id',
@@ -71,8 +84,6 @@ export const CustomCollectionFields = [
   'published_scope',
 ]
 
-export const SmartCollectionRuleFields = ['column', 'relation', 'condition']
-
 export const SmartCollectionFields = [
   'id',
   'handle',
@@ -84,3 +95,5 @@ export const SmartCollectionFields = [
   'disjunctive',
   'published_scope',
 ]
+
+export const SmartCollectionRuleFields = ['column', 'relation', 'condition']

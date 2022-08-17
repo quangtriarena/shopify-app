@@ -8,19 +8,19 @@ import DuplicatorPackageMiddleware from './duplicator_package.js'
 const LIMIT_PER_PROCESS = 100
 
 const create = async (job) => {
-  const { shop, backgroundJobId } = job.data
-
   try {
+    const { shop, backgroundJobId } = job.data
+
     // get backgroundJob
     let backgroundJob = await BackgroundJobMiddleware.findById(backgroundJobId)
 
     // check backgroundJob is running
     if (!['PENDING', 'RUNNING'].includes(backgroundJob.status)) {
-      console.log(`| <<< PROCESS HAS BEEN ${backgroundJob.status} >>>`)
+      console.log(`<<< PROCESS HAS BEEN ${backgroundJob.status} >>>`)
       return
     }
 
-    // update backgroundJob
+    // update backgroundJob status PENDING -> RUNNING
     if (backgroundJob.status === 'PENDING') {
       backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
         status: 'RUNNING',
@@ -33,28 +33,28 @@ const create = async (job) => {
 
     // validate app plan
 
-    // get originalShop
-    let originalShop = await StoreSettingMiddleware.findByUuid(job.data.uuid)
+    // get duplicatorPackage
+    let duplicatorPackage = await DuplicatorPackageMiddleware.findById(backgroundJob.data.package)
       .then((res) => res)
       .catch((err) => {
-        throw { message: 'Original store not found' }
+        throw new Error('Package not found')
       })
 
-    // get duplicatorPackage
-    let duplicatorPackage = await DuplicatorPackageMiddleware.findById(job.data.package)
+    // get duplicatorStore
+    let duplicatorStore = await StoreSettingMiddleware.findByUuid(backgroundJob.data.uuid)
       .then((res) => res)
       .catch((err) => {
-        throw { message: 'Package not found' }
+        throw new Error('Duplicator store not found')
       })
 
     // check package owner
-    if (duplicatorPackage.shop !== originalShop.shop) {
-      throw { message: 'Package permission denied' }
+    if (duplicatorPackage.shop !== duplicatorStore.shop) {
+      throw new Error('Package permission denied')
     }
 
     // check package already to use
-    if (!duplicatorPackage.result) {
-      throw { message: 'Package is not ready to use' }
+    if (duplicatorPackage.status !== 'COMPLETED') {
+      throw new Error('Package is not ready to use')
     }
 
     // download and unzip files
@@ -65,19 +65,23 @@ const create = async (job) => {
     console.log(`Import files:`)
     console.log(files.map((file) => file.name))
 
+    /**
+     * process
+     */
     let result = []
 
-    // process
-    for (let ii = 0, iiLeng = files.length; ii < iiLeng; ii++) {
-      console.log(`[${ii + 1}/${iiLeng}] run`)
+    for (let ii = 0, totalProcesses = files.length; ii < totalProcesses; ii++) {
+      console.log(`[${ii + 1}/${totalProcesses}] run`)
 
       const { type, content } = files[ii]
 
+      // convert csv content to json data
       let jsonData = await csvtojson().fromString(content)
-      console.log(`| json data length ${jsonData.length}`)
+      console.log(`| total json data ${jsonData.length}`)
 
+      // revert json data to entry
       let resources = DuplicatorActions.revertData(type, jsonData)
-      console.log(`| resources length ${resources.length}`)
+      console.log(`| total ${type}s ${resources.length}`)
 
       for (let i = 0, leng = Math.ceil(resources.length / LIMIT_PER_PROCESS); i < leng; i++) {
         console.log(`\t[${i + 1}/${leng}] run`)
@@ -85,14 +89,15 @@ const create = async (job) => {
         let _resources = resources.slice(i * LIMIT_PER_PROCESS, (i + 1) * LIMIT_PER_PROCESS)
 
         console.log(`\t| import data...`)
-        let created = await DuplicatorActions.createData({
+        let createdList = await DuplicatorActions.createData({
           shop,
           accessToken,
           type,
           resources: _resources,
         })
+        console.log(`\t| total imported ${createdList.length}`)
 
-        result.push({ type, result: created })
+        result.push({ type, result: createdList })
 
         console.log(`\t[${i + 1}/${leng}] completed`)
       }
@@ -100,10 +105,10 @@ const create = async (job) => {
       // update backgroundJob
       backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
         status: 'RUNNING',
-        progress: Math.ceil(((ii + 1) / iiLeng) * 100),
+        progress: Math.ceil(((ii + 1) / totalProcesses) * 100),
       })
 
-      console.log(`[${ii + 1}/${iiLeng}] completed`)
+      console.log(`[${ii + 1}/${totalProcesses}] completed`)
     }
 
     // update backgroundJob
@@ -114,7 +119,7 @@ const create = async (job) => {
     })
   } catch (error) {
     // update backgroundJob
-    backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
+    let backgroundJob = await BackgroundJobMiddleware.update(job.data.backgroundJobId, {
       status: 'FAILED',
       message: error.message,
     })

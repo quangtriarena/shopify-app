@@ -38,17 +38,23 @@ function ResourceItem(props) {
           expandOnPrint
         >
           <Card.Section subdued>
-            <Stack vertical>
-              <Stack distribution="fillEvenly">
-                <Stack.Item fill>
-                  <FormControl
-                    {...formData['count']}
-                    onChange={(value) => handleChange('count', value)}
-                  />
-                </Stack.Item>
-                <Stack.Item fill></Stack.Item>
-              </Stack>
-            </Stack>
+            <Card>
+              <Card.Section title="Resource">
+                <Stack vertical>
+                  <Stack distribution="fillEvenly">
+                    <Stack.Item fill>
+                      <FormControl
+                        {...formData['count']}
+                        onChange={(value) => handleChange('count', value)}
+                      />
+                    </Stack.Item>
+                    <Stack.Item fill></Stack.Item>
+                  </Stack>
+                </Stack>
+              </Card.Section>
+              <Card.Section title="Select columns (All columns)"></Card.Section>
+              <Card.Section title="Filters (All resources)"></Card.Section>
+            </Card>
           </Card.Section>
         </Collapsible>
       </Card>

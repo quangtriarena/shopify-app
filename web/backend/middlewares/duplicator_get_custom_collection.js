@@ -33,7 +33,7 @@ export default async ({ shop, accessToken, id }) => {
       query: '?fields=id',
     })
     products = products.products
-    console.log(`\t\t\t products ${products.length}`)
+    console.log(`\t\t\t total products ${products.length}`)
 
     /**
      * get custom collection metafields
@@ -44,7 +44,7 @@ export default async ({ shop, accessToken, id }) => {
       resource: `custom_collections/${custom_collection.id}/`,
     })
     metafields = metafields.metafields
-    console.log(`\t\t\t metafields ${metafields.length}`)
+    console.log(`\t\t\t total metafields ${metafields.length}`)
 
     return {
       custom_collection,

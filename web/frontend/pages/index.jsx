@@ -18,8 +18,8 @@ import { ProductsCard } from '../components'
 import SubmitionApi from '../apis/submition'
 import { useLocation, useNavigate } from 'react-router-dom'
 import CurrentPlanBanner from '../components/CurrentPlanBanner/CurrentPlanBanner'
-import UniqueCode from '../components/UniqueCode/UniqueCode'
-import StoreDuplicator from '../components/StoreDuplicator/StoreDuplicator'
+import UniqueCode from '../components/UniqueCode'
+import DuplicatorStore from '../components/DuplicatorStore'
 
 export default function HomePage(props) {
   const { actions } = props
@@ -55,11 +55,11 @@ export default function HomePage(props) {
           <UniqueCode {...props} />
         </Stack.Item>
         <Stack.Item fill>
-          <StoreDuplicator {...props} />
+          <DuplicatorStore {...props} />
         </Stack.Item>
       </Stack>
 
-      <Button onClick={handleSubmit}>Submit test</Button>
+      {/* <Button onClick={handleSubmit}>Submit test</Button> */}
     </Stack>
   )
 }

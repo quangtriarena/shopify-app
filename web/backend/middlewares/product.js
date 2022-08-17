@@ -23,7 +23,7 @@ const getAll = async ({ shop, accessToken, count }) => {
       hasNextPage = res.pageInfo.hasNext
       nextPageInfo = res.pageInfo.nextPageInfo
 
-      if (typeof count !== 'undefined' && parseInt(count) && items.length >= count) {
+      if (!isNaN(count) && parseInt(count) && items.length >= parseInt(count)) {
         hasNextPage = false
         nextPageInfo = ''
 

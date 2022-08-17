@@ -4,37 +4,41 @@ import DuplicatorPackageMiddleware from './duplicator_package.js'
 
 const create = async (__type, data) => {
   try {
-    let res = null
+    let __data = { shop: data.shop }
+    switch (__type) {
+      case 'duplicator_export':
+        // create duplicatorPackage
+        let duplicatorPackage = await DuplicatorPackageMiddleware.create({
+          shop: data.shop,
+          data: JSON.stringify(data),
+        })
+
+        __data = { ...__data, duplicatorPackageId: duplicatorPackage.id }
+        break
+
+      case 'duplicator_import':
+        __data = { ...__data, ...data }
+        break
+
+      default:
+        break
+    }
 
     // create backgroundJob
     let backgroundJob = await BackgroundJobMiddleware.create({
       type: __type,
       shop: data.shop,
-      data: JSON.stringify(data),
+      data: JSON.stringify(__data),
     })
-
-    // create duplicatorPackage
-    let duplicatorPackage = null
-    if (__type === 'duplicator_export') {
-      duplicatorPackage = await DuplicatorPackageMiddleware.create({
-        shop: data.shop,
-        data: JSON.stringify(data),
-      })
-    }
 
     // add job to queue
     const job = await BullmqJobMiddleware.create({
       __type,
-      ...data,
+      shop: data.shop,
       backgroundJobId: backgroundJob.id,
-      duplicatorPackageId: duplicatorPackage?.id || null,
     })
 
-    return {
-      jobId: job.id,
-      backgroundJobId: backgroundJob.id,
-      duplicatorPackageId: duplicatorPackage?.id || null,
-    }
+    return { jobId: job.id }
   } catch (error) {
     throw error
   }

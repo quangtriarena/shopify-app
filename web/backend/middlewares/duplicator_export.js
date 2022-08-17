@@ -12,23 +12,19 @@ import DuplicatorPackageMiddleware from './duplicator_package.js'
 const LIMIT_PER_PROCESS = 100
 
 const create = async (job) => {
-  const { shop, backgroundJobId, duplicatorPackageId } = job.data
-
   try {
-    const filename = DuplicatorActions.generatePackageName(shop)
-    const rootDir = `./temp/`
-    const filepath = rootDir + filename
+    const { shop, backgroundJobId } = job.data
 
     // get backgroundJob
     let backgroundJob = await BackgroundJobMiddleware.findById(backgroundJobId)
 
     // check backgroundJob is running
     if (!['PENDING', 'RUNNING'].includes(backgroundJob.status)) {
-      console.log(`| <<< PROCESS HAS BEEN ${backgroundJob.status} >>>`)
+      console.log(`<<< PROCESS HAS BEEN ${backgroundJob.status} >>>`)
       return
     }
 
-    // update backgroundJob
+    // update backgroundJob status PENDING -> RUNNING
     if (backgroundJob.status === 'PENDING') {
       backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
         status: 'RUNNING',
@@ -42,27 +38,40 @@ const create = async (job) => {
     // validate app plan
 
     // get duplicatorPackage
+    const { duplicatorPackageId } = backgroundJob.data
     let duplicatorPackage = await DuplicatorPackageMiddleware.findById(duplicatorPackageId)
+    console.log(`data`)
+    console.log('duplicatorPackage.data :>> ', duplicatorPackage.data)
 
-    // update duplicatorPackage
+    // update backgroundJob status PENDING -> RUNNING
     duplicatorPackage = await DuplicatorPackageMiddleware.update(duplicatorPackageId, {
+      status: 'RUNNING',
       result: null,
     })
 
     // create zip file
-    await AdminZipMiddleware.create(filepath)
+    const filename = DuplicatorActions.generatePackageName(shop)
+    const rootDir = `./temp/`
+    const filepath = rootDir + filename
+    const zip = await AdminZipMiddleware.create(filepath)
     console.log(`zip file created ${filepath}`)
 
+    /**
+     * process
+     */
     let result = null
 
-    // process
-    for (let ii = 0, iiLeng = job.data.resources.length; ii < iiLeng; ii++) {
-      console.log(`[${ii + 1}/${iiLeng}] run`)
+    for (
+      let ii = 0, totalProcesses = duplicatorPackage.data.resources.length;
+      ii < totalProcesses;
+      ii++
+    ) {
+      console.log(`[${ii + 1}/${totalProcesses}] run`)
 
-      const { type, count } = job.data.resources[ii]
+      const { type, count } = duplicatorPackage.data.resources[ii]
 
       // get all resources
-      console.log(`| get all resources...`)
+      console.log(`| get all ${type}s...`)
       let resources = []
       switch (type) {
         case 'product':
@@ -88,7 +97,7 @@ const create = async (job) => {
         default:
           break
       }
-      console.log(`| total resources ${resources.length}`)
+      console.log(`| total ${type}s ${resources.length}`)
 
       for (let i = 0, leng = Math.ceil(resources.length / LIMIT_PER_PROCESS); i < leng; i++) {
         console.log(`\t[${i + 1}/${leng}] run`)
@@ -107,11 +116,11 @@ const create = async (job) => {
 
         // convert data to rows data
         let rowsData = DuplicatorActions.convertData(type, exportData)
-        console.log(`\t| total rows data ${rowsData.length}`)
+        console.log(`\t| total rows ${rowsData.length}`)
 
         // create csv content
         let csvContent = DuplicatorActions.createCSV(rowsData)
-        console.log(`\t| csv content length ${csvContent.length}`)
+        console.log(`\t| total characters ${csvContent.length}`)
 
         // update zip file
         let __process = i + 1 < 10 ? '0' + (i + 1) : i + 1
@@ -126,10 +135,10 @@ const create = async (job) => {
       // update background job
       backgroundJob = await BackgroundJobMiddleware.update(backgroundJobId, {
         status: 'RUNNING',
-        progress: Math.ceil(((ii + 1) / iiLeng) * 100),
+        progress: Math.ceil(((ii + 1) / totalProcesses) * 100),
       })
 
-      console.log(`[${ii + 1}/${iiLeng}] completed`)
+      console.log(`[${ii + 1}/${totalProcesses}] completed`)
     }
 
     // upload to s3
@@ -147,14 +156,24 @@ const create = async (job) => {
 
     // update duplicatorPackage
     duplicatorPackage = await DuplicatorPackageMiddleware.update(duplicatorPackageId, {
+      status: 'COMPLETED',
       result: result ? JSON.stringify(result) : null,
     })
   } catch (error) {
     // update backgroundJob
-    await BackgroundJobMiddleware.update(backgroundJobId, {
+    let backgroundJob = await BackgroundJobMiddleware.update(job.data.backgroundJobId, {
       status: 'FAILED',
       message: error.message,
     })
+
+    // update duplicatorPackage
+    let duplicatorPackage = await DuplicatorPackageMiddleware.update(
+      backgroundJob.data.duplicatorPackageId,
+      {
+        status: 'FAILED',
+        message: error.message,
+      },
+    )
 
     throw error
   }

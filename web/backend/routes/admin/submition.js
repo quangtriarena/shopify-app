@@ -2,6 +2,8 @@ import verifyToken from '../../auth/verifyToken.js'
 import ResponseHandler from '../../helpers/responseHandler.js'
 import DuplicatorActions from '../../middlewares/duplicator_actions.js'
 import BullmqBackgroundJobMiddleware from '../../middlewares/bullmq_background_job.js'
+import ProductMiddleware from '../../middlewares/product.js'
+import fs from 'fs'
 
 export default function submitionRoute(app, Shopify) {
   app.get('/api/submition', async (req, res) => {
@@ -12,17 +14,23 @@ export default function submitionRoute(app, Shopify) {
       const session = await verifyToken(req, res, app, Shopify)
       const { shop, accessToken } = session
 
-      req.body = {
-        uuid: '30c6e80b-a334-482a-9a74-0f5d048d3fdd',
-        package: 5,
-      }
-
       let data = null
 
-      data = await BullmqBackgroundJobMiddleware.create('duplicator_import', {
-        ...req.body,
-        shop,
-      })
+      let content = await fs.readFileSync('./temp/47ae3272afc321e12589b6fd77215f29')
+      content = Buffer.from(content).toString('base64')
+
+      let product = {}
+      product.title = 'Burton Custom Freestyle 151'
+      product.body_html = '<strong>Good snowboard!</strong>'
+      product.vendor = 'Burton'
+      product.product_type = 'Snowboard'
+      product.images = [
+        {
+          attachment: content,
+        },
+      ]
+
+      data = await ProductMiddleware.create({ shop, accessToken, data: { product } })
 
       console.log('/api/submition data :>> ', data)
 
@@ -44,16 +52,13 @@ export default function submitionRoute(app, Shopify) {
 //       const { shop, accessToken } = session
 
 //       req.body = {
-//         resources: [
-//           { type: 'products', count: 5 },
-//           { type: 'custom_collection', count: 5 },
-//           { type: 'smart_collection', count: 5 },
-//         ],
+//         uuid: 'fb764dbf-0ca6-40fe-92fa-6724fcc712ae',
+//         package: 9,
 //       }
 
 //       let data = null
 
-//       data = await BullmqBackgroundJobMiddleware.create('duplicator_export', {
+//       data = await BullmqBackgroundJobMiddleware.create('duplicator_import', {
 //         ...req.body,
 //         shop,
 //       })
@@ -77,19 +82,22 @@ export default function submitionRoute(app, Shopify) {
 //       const session = await verifyToken(req, res, app, Shopify)
 //       const { shop, accessToken } = session
 
+//       req.body = {
+//         resources: [
+//           { type: 'product', count: '10' },
+//           { type: 'custom_collection', count: '10' },
+//           { type: 'smart_collection', count: '10' },
+//         ],
+//       }
+
 //       let data = null
 
-//       let url =
-//         'https://arena-installation-new.s3.amazonaws.com/package_haloha-shop_20220810100321768.zip'
+//       data = await BullmqBackgroundJobMiddleware.create('duplicator_export', {
+//         ...req.body,
+//         shop,
+//       })
 
-//       const { files } = await DuplicatorActions.downloadAndUnzipFile(url)
-
-//       console.log(`Import files:`)
-//       console.log(files.map((file) => file.name))
-
-//       // console.log('/api/submition data :>> ', data)
-
-//       data = await BullmqBackgroundJobMiddleware.create('duplicator_import', { shop, files })
+//       console.log('/api/submition data :>> ', data)
 
 //       return ResponseHandler.success(res, data)
 //     } catch (error) {

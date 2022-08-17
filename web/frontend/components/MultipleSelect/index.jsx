@@ -21,8 +21,6 @@ MultipleSelect.defaultProps = {
 function MultipleSelect(props) {
   const { label, options, error, onChange } = props
 
-  console.log('options :>> ', options)
-
   const [value, setValue] = useState(props.value)
   const [active, setActive] = useState(false)
 

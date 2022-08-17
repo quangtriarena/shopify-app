@@ -120,7 +120,7 @@ const getFiles = async (keyword) => {
         }
 
         resolve(
-          keyword ? data.Contents.filter((item) => item.Key.includes(keyword)) : data.Contents
+          keyword ? data.Contents.filter((item) => item.Key.includes(keyword)) : data.Contents,
         )
       })
     })
@@ -238,13 +238,7 @@ const upload = async (key, filepath, unlinked = true) => {
           /**
            * Delete file
            */
-          fs.unlink(filepath, (err) => {
-            if (err) {
-              console.log(`Delete filepath ${filepath} failed: ${err.message}`)
-            } else {
-              console.log(`Filepath ${filepath} deleted`)
-            }
-          })
+          fs.unlink(filepath, () => {})
         }
 
         resolve(data)

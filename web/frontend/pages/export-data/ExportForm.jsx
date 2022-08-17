@@ -1,46 +1,66 @@
 import { Button, Card, DisplayText, Stack, TextField } from '@shopify/polaris'
 import { useEffect, useState } from 'react'
 import FormValidate from '../../helpers/formValidate'
-import SelectResources from './SelectResources'
-import ResourceList from './ResourceList'
+import FormControl from '../../components/FormControl'
+import ResourceItem from './ResourceItem'
 
-const ResourceTypes = ['product', 'custom_collection', 'smart_collection']
+const Resources = [
+  'product',
+  'custom_collection',
+  'smart_collection',
+  // 'page',
+  // 'blog',
+  // 'shop',
+  // 'file',
+  // 'customer',
+  // 'discount_code',
+  // 'draft_order',
+  // 'order',
+  // 'redirect',
+]
 
 const ResourceFormData = {
-  type: {
-    type: 'text',
-    label: 'Type',
-    value: '',
-    error: '',
-    required: true,
-    validate: {},
-  },
+  type: { value: '' },
   count: {
     type: 'select',
     label: 'Count',
-    value: '10',
+    placeholder: '',
+    value: '5',
     error: '',
     required: true,
     validate: {},
     options: [
-      { label: '10 (test)', value: '10' },
-      { label: '20', value: '20' },
-      { label: '50', value: '50' },
-      { label: '100', value: '100' },
-      { label: '200', value: '200' },
-      { label: '500', value: '500' },
-      { label: '1000', value: '1000' },
       { label: 'All', value: 'all' },
+      { label: '5 (test)', value: '5' },
+      { label: '10 (test)', value: '10' },
+      { label: '100', value: '100' },
+      { label: '1000', value: '1000' },
     ],
   },
+  columns: { value: null },
+  filter: { value: null },
 }
 
-const ResourceListFormData = [...ResourceTypes].map((item) => ({
+const ResourceListFormData = Resources.map((item) => ({
   ...ResourceFormData,
-  type: { ...ResourceFormData.type, value: item },
+  type: { value: item },
 }))
 
 const initFormData = {
+  name: {
+    type: 'text',
+    label: 'Package name',
+    placeholder: 'name',
+    value: 'Package - ' + new Date().toISOString(),
+    error: '',
+    required: true,
+    validate: {
+      trim: true,
+      required: [true, 'Required!'],
+      minlength: [1, 'Too short!'],
+      maxlength: [100, 'Too long!'],
+    },
+  },
   resourceTypes: {
     type: 'multiple-select',
     label: 'Select resources',
@@ -48,7 +68,10 @@ const initFormData = {
     error: '',
     required: true,
     validate: {},
-    options: [...ResourceTypes].map((item) => ({ label: item.replace(/_/g, ' '), value: item })),
+    options: Resources.map((item) => ({
+      label: item[0].toUpperCase() + item.slice(1).replace(/_/g, ' ').toLowerCase() + 's',
+      value: item,
+    })),
   },
   resources: [],
 }
@@ -81,7 +104,7 @@ function ExportForm(props) {
     if (name === 'resourceTypes') {
       _formData['resources'] = value.map((item) => ({
         ...ResourceFormData,
-        type: { ...ResourceFormData.type, value: item },
+        type: { value: item },
       }))
     }
 
@@ -90,8 +113,9 @@ function ExportForm(props) {
 
   const handleSubmit = () => {
     try {
-      const data = {
-        resources: formData.resources.map((item) => {
+      let data = {
+        name: formData['name'].value,
+        resources: formData['resources'].map((item) => {
           let obj = {}
           Object.keys(item).forEach((key) =>
             item[key].value ? (obj[key] = item[key].value) : null,
@@ -109,14 +133,50 @@ function ExportForm(props) {
 
   return (
     <Stack vertical>
-      <SelectResources formData={formData} onChange={handleChange} />
+      <Card title={formData['name'].label}>
+        <Card.Section subdued>
+          <TextField
+            {...formData['name']}
+            label=""
+            onChange={(value) => handleChange('name', value)}
+          />
+        </Card.Section>
+      </Card>
 
-      {formData.resources.length > 0 && <ResourceList formData={formData} onChange={setFormData} />}
+      <Card title={formData['resourceTypes'].label}>
+        <Card.Section subdued>
+          <FormControl
+            {...formData['resourceTypes']}
+            onChange={(value) => handleChange('resourceTypes', value)}
+          />
+        </Card.Section>
+      </Card>
+
+      {formData['resources'].length > 0 && (
+        <Card title="Customize resources">
+          <Card.Section subdued>
+            <Stack vertical alignment="fill">
+              {formData.resources.map((item, index) => (
+                <ResourceItem
+                  key={index}
+                  formData={item}
+                  onChange={(value) => {
+                    let _formData = JSON.parse(JSON.stringify(formData))
+                    let _value = JSON.parse(JSON.stringify(value))
+                    _formData.resources[index] = _value
+                    setFormData(_formData)
+                  }}
+                />
+              ))}
+            </Stack>
+          </Card.Section>
+        </Card>
+      )}
 
       <Stack distribution="trailing">
         <Button
-          disabled={!Boolean(formData.resources?.length > 0)}
-          primary={Boolean(formData.resources?.length > 0)}
+          disabled={!Boolean(formData['resources'].length > 0)}
+          primary={Boolean(formData['resources'].length > 0)}
           onClick={handleSubmit}
         >
           Export now

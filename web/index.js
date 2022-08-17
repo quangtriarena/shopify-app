@@ -33,7 +33,6 @@ import storeSettingRoute from './backend/routes/admin/store_setting.js'
 import productRoute from './backend/routes/admin/product.js'
 import billingRoute from './backend/routes/admin/billing.js'
 import backgroundJobRoute from './backend/routes/admin/background_job.js'
-import pupolateRoute from './backend/routes/admin/populate.js'
 import duplicatorRoute from './backend/routes/admin/duplicator.js'
 import submitionRoute from './backend/routes/admin/submition.js'
 
@@ -113,7 +112,7 @@ export async function createServer(
    */
   // -------------------------------------------
 
-  // applyAuthMiddleware(app, { billing: billingSettings })
+  applyAuthMiddleware(app, { billing: billingSettings })
 
   webhookRoute(app, Shopify)
 
@@ -143,7 +142,6 @@ export async function createServer(
   productRoute(app, Shopify)
   billingRoute(app, Shopify)
   backgroundJobRoute(app, Shopify)
-  pupolateRoute(app, Shopify)
   duplicatorRoute(app, Shopify)
   submitionRoute(app, Shopify)
   // -------------------------------------------

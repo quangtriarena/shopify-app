@@ -10,7 +10,7 @@ UniqueCode.propTypes = {
 function UniqueCode(props) {
   const { storeSetting, actions } = props
 
-  const [lockCode, setLockCode] = useState(false)
+  const [lockCode, setLockCode] = useState(true)
 
   return (
     <Card sectioned>
@@ -20,7 +20,7 @@ function UniqueCode(props) {
             <span style={{ textTransform: 'capitalize' }}>Your Store Unique Code</span>
           </DisplayText>
         </Stack>
-        <Stack vertical alignment="center" spacing="tight">
+        <Stack vertical alignment="center">
           <Stack distribution="center">
             <div className="color__error">
               {lockCode ? storeSetting.uuid.replace(/./g, '*') : storeSetting.uuid}
@@ -37,7 +37,9 @@ function UniqueCode(props) {
             >
               Copy
             </Button>
-            <Button onClick={() => setLockCode(!lockCode)}>Lock Code</Button>
+            <Button onClick={() => setLockCode(!lockCode)}>
+              {lockCode ? 'Unlock Code' : 'Lock Code'}
+            </Button>
           </Stack>
         </Stack>
         <Stack distribution="center">

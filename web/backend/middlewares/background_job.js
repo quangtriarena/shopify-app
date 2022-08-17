@@ -41,7 +41,6 @@ const _delete = async (id) => {
 }
 
 const BackgroundJobMiddleware = {
-  STATUS: Repository.STATUS,
   find,
   findById,
   create,

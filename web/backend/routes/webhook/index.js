@@ -13,8 +13,8 @@ export default function webhookRoute(app, Shopify) {
         case 'app/uninstalled':
           StoreSettingMiddleware.getByShop(domain).then((res) => {
             StoreSettingMiddleware.update(res.id, {
-              status: StoreSettingMiddleware.STATUS.UNINSTALLED,
-              appPlan: StoreSettingMiddleware.APP_PLAN.BASIC,
+              status: 'UNINSTALLED',
+              appPlan: 'BASIC',
               acceptedAt: null,
               billings: null,
             })

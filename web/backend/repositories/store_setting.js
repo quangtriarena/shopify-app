@@ -2,26 +2,7 @@ import Model from '../models/store_setting.js'
 import ErrorCodes from '../constants/errorCodes.js'
 import BillingMiddleware from '../middlewares/billing.js'
 
-const STATUS = {
-  RUNNING: 'RUNNING',
-  UNINSTALLED: 'UNINSTALLED',
-}
-const ROLE = {
-  GUEST: 'GUEST',
-  MEMBERSHIP: 'MEMBERSHIP',
-  ADMIN: 'ADMIN',
-}
-const APP_PLAN = {
-  BASIC: 'BASIC',
-  PRO: 'PRO',
-  PLUS: 'PLUS',
-}
-
 export default {
-  STATUS,
-  ROLE,
-  APP_PLAN,
-
   count: async () => {
     try {
       return await Model.count()
@@ -137,12 +118,12 @@ export default {
         if (
           storeSetting.accessToken !== session.accessToken ||
           storeSetting.scope !== session.scope ||
-          storeSetting.status !== STATUS.RUNNING
+          storeSetting.status !== 'RUNNING'
         ) {
           storeSetting = await Model.update(
             {
               accessToken: session.accessToken,
-              status: STATUS.RUNNING,
+              status: 'RUNNING',
             },
             {
               where: { id: storeSetting.id },
@@ -251,8 +232,6 @@ export default {
           storeSetting = storeSetting[1].toJSON()
         }
       }
-
-      console.log('storeSetting :>> ', storeSetting)
 
       return storeSetting
     } catch (error) {

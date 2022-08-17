@@ -1,17 +1,7 @@
 import Model from '../models/background_job.js'
 import ErrorCodes from '../constants/errorCodes.js'
 
-const STATUS = {
-  PENDING: 'PENDING',
-  RUNNING: 'RUNNING',
-  COMPLETED: 'COMPLETED',
-  FAILED: 'FAILED',
-  CANCELED: 'CANCELED',
-}
-
 export default {
-  STATUS,
-
   find: async ({ page, limit, shop }) => {
     try {
       let _page = page && parseInt(page) && parseInt(page) >= 1 ? parseInt(page) : 1
