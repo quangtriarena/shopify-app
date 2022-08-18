@@ -1,13 +1,11 @@
-import { Card, Page, Stack, Pagination, Button } from '@shopify/polaris'
+import { Card, Stack, Pagination, Button } from '@shopify/polaris'
 import AppHeader from '../../components/AppHeader'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import BackgroundJobApi from '../../apis/background_job'
 import { useEffect, useState } from 'react'
 import MySkeletonPage from '../../components/MySkeletonPage'
 import Table from './Table'
-import ConfirmDelete from './ConfirmDelete'
 import { RefreshMinor } from '@shopify/polaris-icons'
-import ConfirmCancel from './ConfirmCancel'
 
 function HistoryActionsPage(props) {
   const { actions } = props
@@ -17,19 +15,12 @@ function HistoryActionsPage(props) {
 
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const [isReady, setIsReady] = useState(false)
   const [backgroundJobs, setBackgroundJobs] = useState(null)
-  const [canceled, setCanceled] = useState(null)
-  const [deleted, setDeleted] = useState(null)
 
-  const getBackgroundJobs = async (query, hideLoading) => {
+  const getBackgroundJobs = async (query) => {
     try {
       if (window.__getProgressTimeout) {
         clearTimeout(window.__getProgressTimeout)
-      }
-
-      if (!hideLoading) {
-        actions.showAppLoading()
       }
 
       let res = await BackgroundJobApi.find(query)
@@ -49,8 +40,6 @@ function HistoryActionsPage(props) {
     } catch (error) {
       console.log(error)
       actions.showNotify({ message: error.message, error: true })
-    } finally {
-      actions.hideAppLoading()
     }
   }
 
@@ -62,12 +51,6 @@ function HistoryActionsPage(props) {
       clearTimeout(window.__getProgressTimeout)
     }
   }, [location.search])
-
-  useEffect(() => {
-    if (!isReady && backgroundJobs) {
-      setIsReady(true)
-    }
-  }, [backgroundJobs])
 
   const handleCancel = async (canceled) => {
     try {
@@ -81,9 +64,13 @@ function HistoryActionsPage(props) {
         throw res.error
       }
 
-      actions.showNotify({ message: 'Canceled' })
+      let _backgroundJobs = { ...backgroundJobs }
+      _backgroundJobs.items = backgroundJobs.items.map((item) =>
+        item.id === canceled.id ? res.data : item,
+      )
+      setBackgroundJobs(_backgroundJobs)
 
-      getBackgroundJobs(location.search)
+      actions.showNotify({ message: 'Canceled' })
     } catch (error) {
       console.log(error)
       actions.showNotify({ message: error.message, error: true })
@@ -112,10 +99,6 @@ function HistoryActionsPage(props) {
     }
   }
 
-  if (!isReady) {
-    return <MySkeletonPage />
-  }
-
   return (
     <Stack vertical alignment="fill">
       <AppHeader {...props} title="History actions" onBack={() => navigate('/')} />
@@ -124,48 +107,32 @@ function HistoryActionsPage(props) {
         <Card.Section>
           <Stack alignment="center" distribution="equalSpacing">
             <div>
-              Total items: <b>{backgroundJobs.totalItems}</b>
+              Total items: <b>{backgroundJobs?.totalItems || 'loading..'}</b>
             </div>
             <Button plain icon={RefreshMinor} onClick={() => getBackgroundJobs(location.search)} />
           </Stack>
         </Card.Section>
+
         <Table
           {...props}
-          items={backgroundJobs.items}
-          onCancel={(item) => setCanceled(item)}
-          onDelete={(item) => setDeleted(item)}
+          items={backgroundJobs?.items}
+          onCancel={(item) => handleCancel(item)}
+          onDelete={(item) => handleDelete(item)}
         />
-        <Card.Section>
-          <Stack distribution="center">
-            <Pagination
-              hasPrevious={backgroundJobs.page > 1}
-              onPrevious={() => setSearchParams({ page: backgroundJobs.page - 1 })}
-              hasNext={backgroundJobs.page < backgroundJobs.totalPages}
-              onNext={() => setSearchParams({ page: backgroundJobs.page + 1 })}
-            />
-          </Stack>
-        </Card.Section>
+
+        {backgroundJobs && (
+          <Card.Section>
+            <Stack distribution="center">
+              <Pagination
+                hasPrevious={backgroundJobs.page > 1}
+                onPrevious={() => setSearchParams({ page: backgroundJobs.page - 1 })}
+                hasNext={backgroundJobs.page < backgroundJobs.totalPages}
+                onNext={() => setSearchParams({ page: backgroundJobs.page + 1 })}
+              />
+            </Stack>
+          </Card.Section>
+        )}
       </Card>
-
-      {canceled && (
-        <ConfirmCancel
-          onDiscard={() => setCanceled(null)}
-          onSubmit={() => {
-            handleCancel(canceled)
-            setCanceled(null)
-          }}
-        />
-      )}
-
-      {deleted && (
-        <ConfirmDelete
-          onDiscard={() => setDeleted(null)}
-          onSubmit={() => {
-            handleDelete(deleted)
-            setDeleted(null)
-          }}
-        />
-      )}
     </Stack>
   )
 }

@@ -7,7 +7,7 @@ const checkCode = async ({ shop, uuid }) => {
     let duplicatorShop = await StoreSettingMiddleware.findByUuid(uuid)
       .then((res) => res)
       .catch((err) => {
-        throw new Error('Invalid code')
+        throw new Error('Invalid unique code')
       })
 
     let storeSetting = await StoreSettingMiddleware.getByShop(shop)
@@ -17,7 +17,7 @@ const checkCode = async ({ shop, uuid }) => {
     }
 
     if (duplicatorShop.duplicator === storeSetting.uuid) {
-      throw new Error('Cannot to set child store as duplicator store')
+      throw new Error('Cannot set your child store as your duplicator store')
     }
 
     storeSetting = await StoreSettingMiddleware.update(storeSetting.id, { duplicator: uuid })

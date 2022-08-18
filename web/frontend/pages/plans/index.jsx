@@ -1,4 +1,4 @@
-import { Banner, Button, Card, DisplayText, Page, Stack } from '@shopify/polaris'
+import { Banner, Button, Card, DisplayText, Stack } from '@shopify/polaris'
 import AppHeader from '../../components/AppHeader'
 import MySkeletonPage from '../../components/MySkeletonPage'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -82,99 +82,95 @@ function PlansPage(props) {
   }
 
   return (
-    <Page>
-      <Stack vertical alignment="fill">
-        <Stack.Item>
-          <AppHeader
-            {...props}
-            title="Pricing plans"
-            primaryActions={[
-              {
-                label: 'Contact us',
-                onClick: () => navigate('/support'),
-                primary: true,
-              },
-            ]}
-            onBack={() => navigate('/')}
-          />
-        </Stack.Item>
+    <Stack vertical alignment="fill">
+      <AppHeader
+        {...props}
+        title="Pricing plans"
+        primaryActions={[
+          {
+            label: 'Contact us',
+            onClick: () => navigate('/support'),
+            primary: true,
+          },
+        ]}
+        onBack={() => navigate('/')}
+      />
 
-        <Stack distribution="fillEvenly">
-          <Card>
-            <Card.Section>
-              <DisplayText size="small">
-                <b>App credits</b>
-              </DisplayText>
-            </Card.Section>
-            <Card.Section>
-              <Stack distribution="equalSpacing" alignment="trailing">
-                <Stack vertical spacing="extraTight">
-                  <Stack alignment="baseline">
-                    <DisplayText size="small">Credits point:</DisplayText>
-                    <DisplayText size="small">
-                      <span className="color__success">
-                        <b>{numberWithCommas(applicationCharge.credits[storeSetting.appPlan])}</b>
-                      </span>
-                    </DisplayText>
-                  </Stack>
-                  <Stack alignment="baseline">
-                    <DisplayText size="small">Price:</DisplayText>
-                    <DisplayText size="small">
-                      <span className="color__link">
-                        <b>$ {numberWithCommas(applicationCharge.price[storeSetting.appPlan])}</b>
-                      </span>
-                    </DisplayText>
-                  </Stack>
-                </Stack>
-                <Button primary onClick={() => handleSubmit(applicationCharge.id)}>
-                  Get more credits
-                </Button>
-              </Stack>
-            </Card.Section>
-          </Card>
-          <Card>
-            <Card.Section>
-              <DisplayText size="small">
-                <b>Current plan</b>
-              </DisplayText>
-            </Card.Section>
-            <Card.Section>
-              <Stack distribution="equalSpacing" alignment="trailing">
-                <Stack vertical spacing="extraTight">
+      <Stack distribution="fillEvenly">
+        <Card>
+          <Card.Section>
+            <DisplayText size="small">
+              <b>App credits</b>
+            </DisplayText>
+          </Card.Section>
+          <Card.Section>
+            <Stack distribution="equalSpacing" alignment="trailing">
+              <Stack vertical spacing="extraTight">
+                <Stack alignment="baseline">
+                  <DisplayText size="small">Credits point:</DisplayText>
                   <DisplayText size="small">
-                    <span
-                      className={
-                        storeSetting.appPlan === 'PRO'
-                          ? 'color__link'
-                          : storeSetting.appPlan === 'PLUS'
-                          ? 'color__success'
-                          : ''
-                      }
-                    >
-                      <b>{storeSetting.appPlan}</b>
+                    <span className="color__success">
+                      <b>{numberWithCommas(applicationCharge.credits[storeSetting.appPlan])}</b>
                     </span>
                   </DisplayText>
+                </Stack>
+                <Stack alignment="baseline">
+                  <DisplayText size="small">Price:</DisplayText>
                   <DisplayText size="small">
-                    {planPrice} / {planTime}
+                    <span className="color__link">
+                      <b>$ {numberWithCommas(applicationCharge.price[storeSetting.appPlan])}</b>
+                    </span>
                   </DisplayText>
                 </Stack>
-                <Button onClick={() => navigate('/support')}>Contact us</Button>
               </Stack>
-            </Card.Section>
-          </Card>
-        </Stack>
-
-        <Stack distribution="fillEvenly" alignment="fill">
-          {appBillings
-            .filter((item) => item.id >= 2001)
-            .map((item, index) => (
-              <Stack.Item key={index}>
-                <PlanCard {...props} item={item} onSubmit={() => handleSubmit(item.id)} />
-              </Stack.Item>
-            ))}
-        </Stack>
+              <Button primary onClick={() => handleSubmit(applicationCharge.id)}>
+                Get more credits
+              </Button>
+            </Stack>
+          </Card.Section>
+        </Card>
+        <Card>
+          <Card.Section>
+            <DisplayText size="small">
+              <b>Current plan</b>
+            </DisplayText>
+          </Card.Section>
+          <Card.Section>
+            <Stack distribution="equalSpacing" alignment="trailing">
+              <Stack vertical spacing="extraTight">
+                <DisplayText size="small">
+                  <span
+                    className={
+                      storeSetting.appPlan === 'PRO'
+                        ? 'color__link'
+                        : storeSetting.appPlan === 'PLUS'
+                        ? 'color__success'
+                        : ''
+                    }
+                  >
+                    <b>{storeSetting.appPlan}</b>
+                  </span>
+                </DisplayText>
+                <DisplayText size="small">
+                  {planPrice} / {planTime}
+                </DisplayText>
+              </Stack>
+              <Button onClick={() => navigate('/support')}>Contact us</Button>
+            </Stack>
+          </Card.Section>
+        </Card>
       </Stack>
-    </Page>
+
+      <Stack distribution="fillEvenly" alignment="fill">
+        {appBillings
+          .filter((item) => item.id >= 2001)
+          .map((item, index) => (
+            <Stack.Item key={index}>
+              <PlanCard {...props} item={item} onSubmit={() => handleSubmit(item.id)} />
+            </Stack.Item>
+          ))}
+      </Stack>
+    </Stack>
   )
 }
 

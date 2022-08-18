@@ -1,4 +1,4 @@
-import { Card, Page, Stack, Button, DisplayText } from '@shopify/polaris'
+import { Card, Stack, Button, DisplayText } from '@shopify/polaris'
 import SubmitionApi from '../apis/submition'
 import { useLocation, useNavigate } from 'react-router-dom'
 import CurrentPlanBanner from '../components/CurrentPlanBanner/CurrentPlanBanner'
@@ -7,22 +7,26 @@ import DuplicatorStore from '../components/DuplicatorStore'
 import DuplicatorApi from '../apis/duplicator'
 import { useEffect, useState } from 'react'
 import PackagesTable from '../components/PackagesTable'
+import { RefreshMinor } from '@shopify/polaris-icons'
+import AppHeader from '../components/AppHeader'
 
 export default function HomePage(props) {
-  const { actions } = props
+  const { actions, storeSetting } = props
 
   const location = useLocation()
   const navigate = useNavigate()
 
   const handleSubmit = async () => {
+    console.log('handleSubmit')
     try {
       actions.showAppLoading()
 
       let res = await SubmitionApi.submit()
-      console.log('handleSubmit res :>> ', res)
       if (!res.success) {
         throw res.error
       }
+
+      console.log('res.data :>> ', res.data)
 
       actions.showNotify({ message: 'Submition successful' })
     } catch (error) {
@@ -40,7 +44,6 @@ export default function HomePage(props) {
       actions.showAppLoading()
 
       let res = await DuplicatorApi.getPackages()
-      console.log('getPackages res :>> ', res)
       if (!res.success) {
         throw res.error
       }
@@ -58,8 +61,65 @@ export default function HomePage(props) {
     getPackages()
   }, [])
 
+  const handleDelete = async (deleted) => {
+    try {
+      actions.showAppLoading()
+
+      let res = await DuplicatorApi.delete(deleted.id)
+      if (!res.success) {
+        throw res.error
+      }
+
+      let _package = packages.filter((item) => item.id !== deleted.id)
+      setPackages(_package)
+
+      actions.showNotify({ message: 'Deleted' })
+    } catch (error) {
+      console.log(error)
+      actions.showNotify({ message: error.message, error: true })
+    } finally {
+      actions.hideAppLoading()
+    }
+  }
+
+  const handleCancel = async (canceled) => {
+    try {
+      actions.showAppLoading()
+
+      let res = await DuplicatorApi.update(canceled.id, {
+        status: 'CANCELED',
+        message: 'Canceled by user',
+      })
+      if (!res.success) {
+        throw res.error
+      }
+
+      let _package = packages.map((item) => (item.id === canceled.id ? res.data : item))
+      setPackages(_package)
+
+      actions.showNotify({ message: 'Canceled' })
+    } catch (error) {
+      console.log(error)
+      actions.showNotify({ message: error.message, error: true })
+    } finally {
+      actions.hideAppLoading()
+    }
+  }
+
   return (
     <Stack vertical alignment="fill">
+      <AppHeader
+        {...props}
+        title="Home"
+        primaryActions={[
+          {
+            label: 'Contact us',
+            onClick: () => navigate('/support'),
+            primary: true,
+          },
+        ]}
+      />
+
       <CurrentPlanBanner {...props} />
 
       <Stack distribution="fillEvenly" alignment="fill">
@@ -75,12 +135,21 @@ export default function HomePage(props) {
         <Card.Section>
           <Stack distribution="equalSpacing" alignment="baseline">
             <DisplayText size="small">Your Backup Packages</DisplayText>
-            <Button primary onClick={() => navigate('/export-data')}>
-              Create new package
-            </Button>
+            <Stack>
+              <Button onClick={getPackages} icon={RefreshMinor}></Button>
+              <Button primary onClick={() => navigate('/export-data')}>
+                Create new package
+              </Button>
+            </Stack>
           </Stack>
         </Card.Section>
-        <PackagesTable {...props} items={packages} />
+        <PackagesTable
+          {...props}
+          items={packages}
+          actions={['edit', 'delete', 'cancel', 'copy', 'archive', 'restore']}
+          onDelete={(item) => handleDelete(item)}
+          onCancel={(item) => handleCancel(item)}
+        />
       </Card>
 
       <Button onClick={handleSubmit}>Submit test</Button>

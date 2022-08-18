@@ -1,4 +1,4 @@
-import { Page, Stack, Button } from '@shopify/polaris'
+import { Stack, Button } from '@shopify/polaris'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import AppHeader from '../../components/AppHeader'
@@ -40,13 +40,11 @@ function ExportPage(props) {
   }
 
   return (
-    <Page>
-      <Stack vertical alignment="fill">
-        <AppHeader {...props} title="Export data" onBack={() => navigate('/')} />
+    <Stack vertical alignment="fill">
+      <AppHeader {...props} title="Export data" onBack={() => navigate('/')} />
 
-        <ExportForm {...props} onSubmit={(data) => handlExport(data)} />
-      </Stack>
-    </Page>
+      <ExportForm {...props} onSubmit={(data) => handlExport(data)} />
+    </Stack>
   )
 }
 

@@ -13,8 +13,8 @@ DuplicatoreStore.propTypes = {
 const initFormData = {
   uuid: {
     type: 'password',
-    label: '',
-    placeholder: 'code',
+    label: 'Enter your duplicator store unique code',
+    placeholder: 'XXXX-XXXX-XXXX-XXXX-XXXX',
     value: '',
     error: '',
     required: false,
@@ -69,6 +69,7 @@ function DuplicatoreStore(props) {
       console.log(error)
       actions.showNotify({ message: error.message, error: true })
 
+      // update error
       let _formData = JSON.parse(JSON.stringify(formData))
       _formData['uuid'] = { ..._formData['uuid'], error: error.message }
       setFormData(_formData)
@@ -78,40 +79,41 @@ function DuplicatoreStore(props) {
   }
 
   return (
-    <Card sectioned>
-      <Stack vertical alignment="fill" spacing="extraLoose">
+    <Card>
+      <Card.Section>
         <Stack distribution="center">
-          <DisplayText size="small">
-            <span style={{ textTransform: 'capitalize' }}>Duplicator Store</span>
-          </DisplayText>
+          <DisplayText size="small">Duplicator Store</DisplayText>
         </Stack>
-        <Stack.Item fill>
-          <Stack vertical>
-            <Stack.Item>Enter your original store unique code:</Stack.Item>
-            <Stack spacing="tight">
-              <Stack.Item fill>
-                <FormControl
-                  {...formData['uuid']}
-                  onChange={(value) => handleChange('uuid', value)}
-                />
-              </Stack.Item>
-              <Button
-                primary={Boolean(formData['uuid'].value)}
-                disabled={!Boolean(formData['uuid'].value)}
-                onClick={handleSubmit}
-              >
-                Check Code
-              </Button>
-            </Stack>
+      </Card.Section>
+      <Card.Section>
+        <Stack vertical alignment="fill">
+          <div style={{ textAlign: 'center' }}>{formData['uuid'].label}</div>
+          <Stack>
+            <Stack.Item fill>
+              <FormControl
+                {...formData['uuid']}
+                label=""
+                onChange={(value) => handleChange('uuid', value)}
+              />
+            </Stack.Item>
+            <Button
+              primary={Boolean(formData['uuid'].value)}
+              disabled={!Boolean(formData['uuid'].value)}
+              onClick={handleSubmit}
+            >
+              Check Code
+            </Button>
           </Stack>
-        </Stack.Item>
+        </Stack>
+      </Card.Section>
+      <Card.Section subdued>
         <Stack distribution="center">
           <div className="color__note" style={{ maxWidth: 400, textAlign: 'center' }}>
             This app makes it easy to duplicate a store's content onto another, either to spin up a
             staging.
           </div>
         </Stack>
-      </Stack>
+      </Card.Section>
     </Card>
   )
 }

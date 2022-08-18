@@ -1,7 +1,19 @@
 import apiCaller from '../helpers/apiCaller'
 
+const update = async (id, data) => {
+  return await apiCaller(`/api/duplicator/${id}`, 'PUT', data)
+}
+
+const _delete = async (id) => {
+  return await apiCaller(`/api/duplicator/${id}`, 'DELETE')
+}
+
 const getPackages = async () => {
   return await apiCaller(`/api/duplicator-packages`)
+}
+
+const getDuplicatorPackages = async () => {
+  return await apiCaller(`/api/duplicator-duplicator-packages`)
 }
 
 const checkCode = async (data) => {
@@ -13,17 +25,17 @@ const _export = async (data) => {
 }
 
 const _import = async (data) => {
-  const formData = new FormData()
-
-  if (data.files?.length) {
-    data.files.forEach((file) => formData.append('files', file))
-  }
-
-  return await apiCaller(`/api/duplicator-import`, 'POST', formData, {
-    'Content-Type': 'multipart/form-data',
-  })
+  return await apiCaller(`/api/duplicator-import`, 'POST', data)
 }
 
-const DuplicatorApi = { getPackages, checkCode, export: _export, import: _import }
+const DuplicatorApi = {
+  update,
+  delete: _delete,
+  getPackages,
+  getDuplicatorPackages,
+  checkCode,
+  export: _export,
+  import: _import,
+}
 
 export default DuplicatorApi

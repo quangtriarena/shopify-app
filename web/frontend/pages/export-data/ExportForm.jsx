@@ -60,13 +60,30 @@ const initFormData = {
       minlength: [1, 'Too short!'],
       maxlength: [100, 'Too long!'],
     },
+    focused: true,
+  },
+  description: {
+    type: 'text',
+    label: 'Package description',
+    placeholder: 'description',
+    value: 'Package description',
+    error: '',
+    required: true,
+    multiline: 4,
+    validate: {
+      trim: true,
+      required: [true, 'Required!'],
+      minlength: [1, 'Too short!'],
+      maxlength: [200, 'Too long!'],
+    },
   },
   resourceTypes: {
     type: 'multiple-select',
     label: 'Select resources',
+    placeholder: '',
     value: [],
     error: '',
-    required: true,
+    required: false,
     validate: {},
     options: Resources.map((item) => ({
       label: item[0].toUpperCase() + item.slice(1).replace(/_/g, ' ').toLowerCase() + 's',
@@ -115,6 +132,7 @@ function ExportForm(props) {
     try {
       let data = {
         name: formData['name'].value,
+        description: formData['description'].value,
         resources: formData['resources'].map((item) => {
           let obj = {}
           Object.keys(item).forEach((key) =>
@@ -133,23 +151,21 @@ function ExportForm(props) {
 
   return (
     <Stack vertical>
-      <Card title={formData['name'].label}>
-        <Card.Section subdued>
-          <TextField
-            {...formData['name']}
-            label=""
-            onChange={(value) => handleChange('name', value)}
+      <Card sectioned>
+        <Stack vertical alignment="fill">
+          <FormControl {...formData['name']} onChange={(value) => handleChange('name', value)} />
+          <FormControl
+            {...formData['description']}
+            onChange={(value) => handleChange('description', value)}
           />
-        </Card.Section>
+        </Stack>
       </Card>
 
-      <Card title={formData['resourceTypes'].label}>
-        <Card.Section subdued>
-          <FormControl
-            {...formData['resourceTypes']}
-            onChange={(value) => handleChange('resourceTypes', value)}
-          />
-        </Card.Section>
+      <Card sectioned title={formData['resourceTypes'].label}>
+        <FormControl
+          {...formData['resourceTypes']}
+          onChange={(value) => handleChange('resourceTypes', value)}
+        />
       </Card>
 
       {formData['resources'].length > 0 && (

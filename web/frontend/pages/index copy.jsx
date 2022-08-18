@@ -1,14 +1,4 @@
-import {
-  Card,
-  Page,
-  Layout,
-  TextContainer,
-  Image,
-  Stack,
-  Link,
-  Heading,
-  Button,
-} from '@shopify/polaris'
+import { Card, Layout, TextContainer, Image, Stack, Link, Heading, Button } from '@shopify/polaris'
 import { TitleBar } from '@shopify/app-bridge-react'
 
 import { trophyImage } from '../assets'
@@ -25,7 +15,7 @@ export default function HomePage(props) {
   const navigate = useNavigate()
 
   return (
-    <Page narrowWidth>
+    <>
       {/* <TitleBar title="App name" primaryAction={null} /> */}
 
       <Layout>
@@ -80,6 +70,6 @@ export default function HomePage(props) {
           <ProductsCard {...props} />
         </Layout.Section>
       </Layout>
-    </Page>
+    </>
   )
 }

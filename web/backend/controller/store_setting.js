@@ -17,7 +17,7 @@ export default {
 
   update: async (req, res) => {
     try {
-      const session = await verifyToken(req, res, app, Shopify)
+      const session = await verifyToken(req, res)
 
       const { acceptedAt } = req.body
 
