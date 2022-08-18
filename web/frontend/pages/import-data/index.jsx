@@ -18,7 +18,7 @@ function ImportPage(props) {
 
   const getPackages = async () => {
     try {
-      actions.showAppLoading()
+      setPackages(null)
 
       let res = await DuplicatorApi.getDuplicatorPackages()
       if (!res.success) {
@@ -29,8 +29,6 @@ function ImportPage(props) {
     } catch (error) {
       console.log(error)
       actions.showNotify({ message: error.message, error: true })
-    } finally {
-      actions.hideAppLoading()
     }
   }
 

@@ -25,16 +25,15 @@ const ResourceFormData = {
     type: 'select',
     label: 'Count',
     placeholder: '',
-    value: '5',
+    value: '10',
     error: '',
     required: true,
     validate: {},
     options: [
-      { label: 'All', value: 'all' },
-      { label: '5 (test)', value: '5' },
       { label: '10 (test)', value: '10' },
       { label: '100', value: '100' },
       { label: '1000', value: '1000' },
+      { label: 'All', value: 'all' },
     ],
   },
   columns: { value: null },
@@ -91,6 +90,24 @@ const initFormData = {
     })),
   },
   resources: [],
+  schedule: {
+    type: 'select',
+    label: 'Schedule',
+    placeholder: '',
+    value: 'one-time',
+    error: '',
+    required: true,
+    validate: {},
+    options: [
+      { label: 'One time', value: 'one-time' },
+      { label: 'Every 6 hours', value: 'every-6-hours' },
+      { label: 'Every 12 hours', value: 'every-12-hours' },
+      { label: 'Every day', value: 'every-day' },
+      { label: 'Every week', value: 'every-week' },
+      { label: 'Every month', value: 'every-month' },
+    ],
+    disabled: true,
+  },
 }
 
 function ExportForm(props) {
@@ -188,6 +205,20 @@ function ExportForm(props) {
           </Card.Section>
         </Card>
       )}
+
+      <Card title="Optional">
+        <Card.Section>
+          <Stack distribution="fillEvenly">
+            <Stack.Item fill>
+              <FormControl
+                {...formData['schedule']}
+                onChange={(value) => handleChange('schedule', value)}
+              />
+            </Stack.Item>
+            <Stack.Item fill></Stack.Item>
+          </Stack>
+        </Card.Section>
+      </Card>
 
       <Stack distribution="trailing">
         <Button

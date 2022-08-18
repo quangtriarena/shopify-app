@@ -41,7 +41,7 @@ export default function HomePage(props) {
 
   const getPackages = async () => {
     try {
-      actions.showAppLoading()
+      setPackages(null)
 
       let res = await DuplicatorApi.getPackages()
       if (!res.success) {
@@ -52,8 +52,6 @@ export default function HomePage(props) {
     } catch (error) {
       console.log(error)
       actions.showNotify({ message: error.message, error: true })
-    } finally {
-      actions.hideAppLoading()
     }
   }
 
