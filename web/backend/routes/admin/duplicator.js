@@ -6,6 +6,7 @@ export default function duplicatorRoute(app) {
   app.get('/api/duplicator-packages', Controller.get)
   app.get('/api/duplicator-duplicator-packages', Controller.getByDuplicator)
   app.post('/api/duplicator-check-code', Controller.checkCode)
+  app.get('/api/duplicator-store', Controller.getDuplicatorStore)
   app.post('/api/duplicator-export', Controller.export)
   app.post('/api/duplicator-import', Controller.import)
 }

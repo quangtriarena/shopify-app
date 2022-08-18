@@ -14,7 +14,7 @@ const initFormData = {
   uuid: {
     type: 'password',
     label: 'Enter your duplicator store unique code',
-    placeholder: 'XXXX-XXXX-XXXX-XXXX-XXXX',
+    placeholder: 'xxxx-xxxx-xxxx-xxxx-xxxx',
     value: '',
     error: '',
     required: false,
@@ -32,6 +32,9 @@ function DuplicatoreStore(props) {
   const { actions, storeSetting } = props
 
   const [formData, setFormData] = useState(initFormData)
+  const [duplicatorStore, setDuplicatorStore] = useState(null)
+
+  useEffect(() => console.log('duplicatorStore :>> ', duplicatorStore), [duplicatorStore])
 
   const handleChange = (name, value) => {
     let _formData = JSON.parse(JSON.stringify(formData))
@@ -39,9 +42,24 @@ function DuplicatoreStore(props) {
     setFormData(_formData)
   }
 
+  const getDuplicatorStore = async () => {
+    try {
+      let res = await DuplicatorApi.getDuplicatorStore()
+      if (!res.success) {
+        throw res.error
+      }
+
+      setDuplicatorStore(res.data)
+    } catch (error) {
+      console.log(error)
+      actions.showNotify({ message: error.message, error: true })
+    }
+  }
+
   useEffect(() => {
     if (storeSetting.duplicator) {
       handleChange('uuid', storeSetting.duplicator)
+      getDuplicatorStore()
     }
   }, [])
 
@@ -62,7 +80,8 @@ function DuplicatoreStore(props) {
         throw res.error
       }
 
-      actions.setStoreSetting(res.data)
+      actions.setStoreSetting(res.data.store)
+      setDuplicatorStore(res.data.duplicatorStore)
 
       actions.showNotify({ message: 'Saved' })
     } catch (error) {
@@ -87,7 +106,7 @@ function DuplicatoreStore(props) {
       </Card.Section>
       <Card.Section>
         <Stack vertical alignment="fill">
-          <div style={{ textAlign: 'center' }}>{formData['uuid'].label}</div>
+          <div>{formData['uuid'].label}</div>
           <Stack>
             <Stack.Item fill>
               <FormControl
@@ -97,8 +116,14 @@ function DuplicatoreStore(props) {
               />
             </Stack.Item>
             <Button
-              primary={Boolean(formData['uuid'].value)}
-              disabled={!Boolean(formData['uuid'].value)}
+              primary={Boolean(
+                formData['uuid'].value && formData['uuid'].value !== storeSetting.duplicator,
+              )}
+              disabled={
+                !Boolean(
+                  formData['uuid'].value && formData['uuid'].value !== storeSetting.duplicator,
+                )
+              }
               onClick={handleSubmit}
             >
               Check Code
@@ -106,6 +131,13 @@ function DuplicatoreStore(props) {
           </Stack>
         </Stack>
       </Card.Section>
+      {duplicatorStore && (
+        <Card.Section>
+          <div>
+            Duplicator store: <b className="color__link">{duplicatorStore?.shop}</b>
+          </div>
+        </Card.Section>
+      )}
       <Card.Section subdued>
         <Stack distribution="center">
           <div className="color__note" style={{ maxWidth: 400, textAlign: 'center' }}>

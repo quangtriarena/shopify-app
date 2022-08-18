@@ -97,6 +97,21 @@ export default {
     }
   },
 
+  getDuplicatorStore: async (req, res) => {
+    try {
+      const session = await verifyToken(req, res)
+      const { shop, accessToken } = session
+
+      let storeSetting = await StoreSettingMiddleware.getByShop(shop)
+
+      let duplicatorStore = await StoreSettingMiddleware.findByUuid(storeSetting.duplicator)
+
+      return ResponseHandler.success(res, duplicatorStore)
+    } catch (error) {
+      return ResponseHandler.error(res, error)
+    }
+  },
+
   export: async (req, res) => {
     try {
       const session = await verifyToken(req, res)

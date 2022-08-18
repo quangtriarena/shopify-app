@@ -7,6 +7,7 @@ import { selectStoreSetting, setStoreSetting } from './redux/reducers/storeSetti
 import { NavigationMenu, Toast } from '@shopify/app-bridge-react'
 import Preloader from './components/Preloader'
 import Privacy from './components/Privacy'
+import { Page } from '@shopify/polaris'
 
 function AppContainer(props) {
   const { actions, children, storeSetting } = props
@@ -67,7 +68,17 @@ function AppContainer(props) {
     return <Preloader />
   }
 
-  return <div>{storeSetting?.acceptedAt ? children : <Privacy onAction={acceptPrivacy} />}</div>
+  return (
+    <div>
+      {storeSetting?.acceptedAt ? (
+        children
+      ) : (
+        <Page fullWidth>
+          <Privacy onAction={acceptPrivacy} />
+        </Page>
+      )}
+    </div>
+  )
 }
 
 export default AppContainer

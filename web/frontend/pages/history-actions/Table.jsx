@@ -49,7 +49,7 @@ function Table(props) {
       </h3>,
       <Badge status={BadgeStatus[item.status]}>
         {item.status}
-        {item.status === 'RUNNING' ? ` ${item.progress}%` : ``}
+        {item.status === 'RUNNING' && item.progress > 0 ? ` ${item.progress}%` : ``}
       </Badge>,
       <Stack vertical spacing="extraTight">
         {Boolean(item.type === 'duplicator_import' && item.result?.length > 0) && (

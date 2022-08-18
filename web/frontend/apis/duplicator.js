@@ -20,6 +20,10 @@ const checkCode = async (data) => {
   return await apiCaller(`/api/duplicator-check-code`, 'POST', data)
 }
 
+const getDuplicatorStore = async () => {
+  return await apiCaller(`/api/duplicator-store`)
+}
+
 const _export = async (data) => {
   return await apiCaller(`/api/duplicator-export`, 'POST', data)
 }
@@ -34,6 +38,7 @@ const DuplicatorApi = {
   getPackages,
   getDuplicatorPackages,
   checkCode,
+  getDuplicatorStore,
   export: _export,
   import: _import,
 }

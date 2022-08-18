@@ -1,4 +1,4 @@
-import { Stack, Button, DisplayText, Card } from '@shopify/polaris'
+import { Stack, Button, DisplayText, Card, Tooltip } from '@shopify/polaris'
 import AppHeader from '../../components/AppHeader'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
@@ -73,11 +73,13 @@ function ImportPage(props) {
           <Stack distribution="equalSpacing" alignment="baseline">
             <DisplayText size="small">Duplicator Store Backup Packages</DisplayText>
             <Stack>
-              <Button
-                onClick={getPackages}
-                icon={RefreshMinor}
-                disabled={!Boolean(storeSetting.duplicator)}
-              ></Button>
+              <Tooltip content="Refresh">
+                <Button
+                  onClick={getPackages}
+                  icon={RefreshMinor}
+                  disabled={!Boolean(storeSetting.duplicator)}
+                ></Button>
+              </Tooltip>
             </Stack>
           </Stack>
         </Card.Section>

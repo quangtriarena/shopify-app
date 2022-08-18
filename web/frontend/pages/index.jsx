@@ -1,4 +1,4 @@
-import { Card, Stack, Button, DisplayText } from '@shopify/polaris'
+import { Card, Stack, Button, DisplayText, Tooltip } from '@shopify/polaris'
 import SubmitionApi from '../apis/submition'
 import { useLocation, useNavigate } from 'react-router-dom'
 import CurrentPlanBanner from '../components/CurrentPlanBanner/CurrentPlanBanner'
@@ -136,7 +136,9 @@ export default function HomePage(props) {
           <Stack distribution="equalSpacing" alignment="baseline">
             <DisplayText size="small">Your Backup Packages</DisplayText>
             <Stack>
-              <Button onClick={getPackages} icon={RefreshMinor}></Button>
+              <Tooltip content="Refresh">
+                <Button onClick={getPackages} icon={RefreshMinor}></Button>
+              </Tooltip>
               <Button primary onClick={() => navigate('/export-data')}>
                 Create new package
               </Button>

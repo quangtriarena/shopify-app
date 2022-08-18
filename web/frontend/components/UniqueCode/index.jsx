@@ -22,7 +22,7 @@ function UniqueCode(props) {
       <Card.Section>
         <Stack vertical alignment="center">
           <div className="color__error">
-            {lockCode ? 'XXXX-XXXX-XXXX-XXXX-XXXX' : storeSetting.uuid}
+            {lockCode ? 'xxxx-xxxx-xxxx-xxxx-xxxx' : storeSetting.uuid}
           </div>
           <Stack distribution="center">
             <Button
