@@ -179,10 +179,15 @@ function ExportForm(props) {
       </Card>
 
       <Card sectioned title={formData['resourceTypes'].label}>
-        <FormControl
-          {...formData['resourceTypes']}
-          onChange={(value) => handleChange('resourceTypes', value)}
-        />
+        <Stack distribution="fillEvenly">
+          <Stack.Item fill>
+            <FormControl
+              {...formData['resourceTypes']}
+              onChange={(value) => handleChange('resourceTypes', value)}
+            />
+          </Stack.Item>
+          <Stack.Item fill></Stack.Item>
+        </Stack>
       </Card>
 
       {formData['resources'].length > 0 && (
@@ -206,19 +211,21 @@ function ExportForm(props) {
         </Card>
       )}
 
-      <Card title="Optional">
-        <Card.Section>
-          <Stack distribution="fillEvenly">
-            <Stack.Item fill>
-              <FormControl
-                {...formData['schedule']}
-                onChange={(value) => handleChange('schedule', value)}
-              />
-            </Stack.Item>
-            <Stack.Item fill></Stack.Item>
-          </Stack>
-        </Card.Section>
-      </Card>
+      {formData['resources'].length > 0 && (
+        <Card title="Optional">
+          <Card.Section>
+            <Stack distribution="fillEvenly">
+              <Stack.Item fill>
+                <FormControl
+                  {...formData['schedule']}
+                  onChange={(value) => handleChange('schedule', value)}
+                />
+              </Stack.Item>
+              <Stack.Item fill></Stack.Item>
+            </Stack>
+          </Card.Section>
+        </Card>
+      )}
 
       <Stack distribution="trailing">
         <Button

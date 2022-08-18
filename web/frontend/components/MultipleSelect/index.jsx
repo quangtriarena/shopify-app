@@ -50,6 +50,7 @@ function MultipleSelect(props) {
               setActive(!active)
               setValue(props.value)
             }}
+            fullWidth
           >
             {label}
           </Button>
