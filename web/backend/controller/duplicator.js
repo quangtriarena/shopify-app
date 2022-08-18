@@ -1,6 +1,7 @@
 import verifyToken from '../auth/verifyToken.js'
 import ResponseHandler from '../helpers/responseHandler.js'
 import BullmqBackgroundJobMiddleware from '../middlewares/bullmq_background_job.js'
+import DuplicatoreMiddleware from '../middlewares/duplicator.js'
 import DuplicatorActions from '../middlewares/duplicator_actions.js'
 import DuplicatorPackageMiddleware from '../middlewares/duplicator_package.js'
 

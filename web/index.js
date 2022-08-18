@@ -178,16 +178,16 @@ export async function createServer(
 
 createServer().then(({ app }) =>
   app.listen(PORT, () => {
-    console.log(``)
-    console.log('++++++++++++++++++++++++++++++++++++')
-    console.log('+                                  +')
-    console.log('+   Welcome to ArenaCommerce App   +')
-    console.log('+                                  +')
-    console.log('++++++++++++++++++++++++++++++++++++')
-    console.log(``)
-    console.log(`[SERVE] ${process.env.HOST}/install`)
-    console.log(``)
-    console.log(`[DEV] ${process.env.HOST}/api/auth?shop=${process.env.SHOP}`)
-    console.log(``)
+    console.log(`.`)
+    console.log(`....................................`)
+    console.log(`.                                  .`)
+    console.log(`.   Welcome to ArenaCommerce App   .`)
+    console.log(`.                                  .`)
+    console.log(`....................................`)
+    console.log(`.`)
+    console.log(`[SERVE] \t${process.env.HOST}/install`)
+    console.log(`.`)
+    console.log(`[DEV] \t${process.env.HOST}/api/auth?shop=${process.env.SHOP}`)
+    console.log(`.`)
   }),
 )
