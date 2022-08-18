@@ -13,10 +13,10 @@ import { useState } from 'react'
 import formatDateTime from '../../helpers/formatDateTime'
 import ImportResult from './ImportResult'
 
-const BADGE_STATUSES = {
+const BadgeStatus = {
+  COMPLETED: 'success',
   PENDING: 'warning',
   RUNNING: 'info',
-  COMPLETED: 'success',
   FAILED: 'critical',
   CANCELED: 'attention',
 }
@@ -68,7 +68,7 @@ function Table(props) {
     <h3>
       <b>{item.type}</b>
     </h3>,
-    <Badge status={BADGE_STATUSES[item.status]}>
+    <Badge status={BadgeStatus[item.status]}>
       {item.status}
       {item.status === 'RUNNING' ? ` ${item.progress}%` : ``}
     </Badge>,

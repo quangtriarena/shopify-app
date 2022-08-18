@@ -1,17 +1,6 @@
 import dotenv from 'dotenv'
 dotenv.config({ path: './../.env' })
 
-// console.log('WEB PROCESS')
-// console.log(`| SHOPIFY_API_KEY: ${process.env.SHOPIFY_API_KEY}`)
-// console.log(`| SHOPIFY_API_SECRET: ${process.env.SHOPIFY_API_SECRET}`)
-// console.log(`| HOST: ${process.env.HOST}`)
-// console.log(`| SCOPES: ${process.env.SCOPES}`)
-// console.log(`| WEBHOOKS: ${process.env.WEBHOOKS}`)
-// console.log(`| API_VERSION: ${process.env.API_VERSION}`)
-// console.log(`| PORT: ${process.env.PORT}`)
-// console.log(`| BACKEND_PORT: ${process.env.BACKEND_PORT}`)
-// console.log(`| SHOP: ${process.env.SHOP}`)
-
 // @ts-check
 import { join } from 'path'
 import fs from 'fs'
@@ -114,36 +103,26 @@ export async function createServer(
 
   applyAuthMiddleware(app, { billing: billingSettings })
 
-  webhookRoute(app, Shopify)
+  // -------------------------------------------
+  /**
+   * WEBHOOK ROUTES
+   */
+  webhookRoute(app)
+  // -------------------------------------------
 
   // All endpoints after this point will require an active session
   app.use('/api/*', verifyRequest(app, { billing: billingSettings }))
-
-  app.get('/api/products/create', async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(req, res, app.get('use-online-tokens'))
-    let status = 200
-    let error = null
-
-    try {
-      await productCreator(session)
-    } catch (e) {
-      console.log(`Failed to process products/create: ${e.message}`)
-      status = 500
-      error = e.message
-    }
-    res.status(status).send({ success: status === 200, error })
-  })
 
   // -------------------------------------------
   /**
    * ADMIN ROUTES
    */
-  storeSettingRoute(app, Shopify)
-  productRoute(app, Shopify)
-  billingRoute(app, Shopify)
-  backgroundJobRoute(app, Shopify)
-  duplicatorRoute(app, Shopify)
-  submitionRoute(app, Shopify)
+  storeSettingRoute(app)
+  productRoute(app)
+  billingRoute(app)
+  backgroundJobRoute(app)
+  duplicatorRoute(app)
+  submitionRoute(app)
   // -------------------------------------------
 
   // All endpoints after this point will have access to a request.body
@@ -199,17 +178,16 @@ export async function createServer(
 
 createServer().then(({ app }) =>
   app.listen(PORT, () => {
+    console.log(``)
     console.log('++++++++++++++++++++++++++++++++++++')
     console.log('+                                  +')
     console.log('+   Welcome to ArenaCommerce App   +')
     console.log('+                                  +')
     console.log('++++++++++++++++++++++++++++++++++++')
-    console.log(`|`)
-    console.log('| Install Link:')
-    console.log(`| ${process.env.HOST}/install`)
-    console.log(`|`)
-    console.log('| Shopify Admin App:')
-    console.log(`| ${process.env.HOST}/api/auth?shop=${process.env.SHOP}`)
-    console.log(`|`)
+    console.log(``)
+    console.log(`[SERVE] ${process.env.HOST}/install`)
+    console.log(``)
+    console.log(`[DEV] ${process.env.HOST}/api/auth?shop=${process.env.SHOP}`)
+    console.log(``)
   }),
 )

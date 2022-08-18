@@ -1,25 +1,12 @@
-import {
-  Card,
-  Page,
-  Layout,
-  TextContainer,
-  Image,
-  Stack,
-  Link,
-  Heading,
-  Button,
-} from '@shopify/polaris'
-import { TitleBar } from '@shopify/app-bridge-react'
-
-import { trophyImage } from '../assets'
-
-import { ProductsCard } from '../components'
-
+import { Card, Page, Stack, Button, DisplayText } from '@shopify/polaris'
 import SubmitionApi from '../apis/submition'
 import { useLocation, useNavigate } from 'react-router-dom'
 import CurrentPlanBanner from '../components/CurrentPlanBanner/CurrentPlanBanner'
 import UniqueCode from '../components/UniqueCode'
 import DuplicatorStore from '../components/DuplicatorStore'
+import DuplicatorApi from '../apis/duplicator'
+import { useEffect, useState } from 'react'
+import PackagesTable from '../components/PackagesTable'
 
 export default function HomePage(props) {
   const { actions } = props
@@ -32,7 +19,7 @@ export default function HomePage(props) {
       actions.showAppLoading()
 
       let res = await SubmitionApi.submit()
-      console.log('SubmitionApi res :>> ', res)
+      console.log('handleSubmit res :>> ', res)
       if (!res.success) {
         throw res.error
       }
@@ -46,6 +33,31 @@ export default function HomePage(props) {
     }
   }
 
+  const [packages, setPackages] = useState(null)
+
+  const getPackages = async () => {
+    try {
+      actions.showAppLoading()
+
+      let res = await DuplicatorApi.getPackages()
+      console.log('getPackages res :>> ', res)
+      if (!res.success) {
+        throw res.error
+      }
+
+      setPackages(res.data)
+    } catch (error) {
+      console.log(error)
+      actions.showNotify({ message: error.message, error: true })
+    } finally {
+      actions.hideAppLoading()
+    }
+  }
+
+  useEffect(() => {
+    getPackages()
+  }, [])
+
   return (
     <Stack vertical alignment="fill">
       <CurrentPlanBanner {...props} />
@@ -58,6 +70,18 @@ export default function HomePage(props) {
           <DuplicatorStore {...props} />
         </Stack.Item>
       </Stack>
+
+      <Card>
+        <Card.Section>
+          <Stack distribution="equalSpacing" alignment="baseline">
+            <DisplayText size="small">Your Backup Packages</DisplayText>
+            <Button primary onClick={() => navigate('/export-data')}>
+              Create new package
+            </Button>
+          </Stack>
+        </Card.Section>
+        <PackagesTable {...props} items={packages} />
+      </Card>
 
       <Button onClick={handleSubmit}>Submit test</Button>
     </Stack>
