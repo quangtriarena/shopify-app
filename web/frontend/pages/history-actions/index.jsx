@@ -24,9 +24,7 @@ function HistoryActionsPage(props) {
       }
 
       let res = await BackgroundJobApi.find(query)
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       setBackgroundJobs(res.data)
 
@@ -60,9 +58,7 @@ function HistoryActionsPage(props) {
         status: 'CANCELED',
         message: 'Canceled by user',
       })
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       let _backgroundJobs = { ...backgroundJobs }
       _backgroundJobs.items = backgroundJobs.items.map((item) =>
@@ -84,9 +80,7 @@ function HistoryActionsPage(props) {
       actions.showAppLoading()
 
       let res = await BackgroundJobApi.delete(deleted.id)
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       actions.showNotify({ message: 'Deleted' })
 

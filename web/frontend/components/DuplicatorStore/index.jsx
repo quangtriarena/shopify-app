@@ -29,12 +29,9 @@ const initFormData = {
 }
 
 function DuplicatoreStore(props) {
-  const { actions, storeSetting } = props
+  const { actions, storeSetting, duplicatorStore } = props
 
   const [formData, setFormData] = useState(initFormData)
-  const [duplicatorStore, setDuplicatorStore] = useState(null)
-
-  useEffect(() => console.log('duplicatorStore :>> ', duplicatorStore), [duplicatorStore])
 
   const handleChange = (name, value) => {
     let _formData = JSON.parse(JSON.stringify(formData))
@@ -45,11 +42,9 @@ function DuplicatoreStore(props) {
   const getDuplicatorStore = async () => {
     try {
       let res = await DuplicatorApi.getDuplicatorStore()
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
-      setDuplicatorStore(res.data)
+      actions.setDuplicatorStore(res.data)
     } catch (error) {
       console.log(error)
       actions.showNotify({ message: error.message, error: true })
@@ -59,7 +54,11 @@ function DuplicatoreStore(props) {
   useEffect(() => {
     if (storeSetting.duplicator) {
       handleChange('uuid', storeSetting.duplicator)
-      getDuplicatorStore()
+
+      // get duplicator store if any
+      if (!duplicatorStore) {
+        getDuplicatorStore()
+      }
     }
   }, [])
 
@@ -76,9 +75,7 @@ function DuplicatoreStore(props) {
       actions.showAppLoading()
 
       let res = await DuplicatorApi.checkCode({ uuid: data['uuid'].value })
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       actions.setStoreSetting(res.data.store)
       setDuplicatorStore(res.data.duplicatorStore)

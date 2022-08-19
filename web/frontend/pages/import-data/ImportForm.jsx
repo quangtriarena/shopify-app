@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import FormValidate from '../../helpers/formValidate'
 import FormControl from '../../components/FormControl'
 
-const initialFormData = {
+const initFormData = {
   file: {
     type: 'file',
     label: 'File (must be .zip file)',
@@ -19,7 +19,7 @@ const initialFormData = {
 function ImportForm(props) {
   const { actions, onSubmit } = props
 
-  const [formData, setFormData] = useState(initialFormData)
+  const [formData, setFormData] = useState(initFormData)
 
   useEffect(() => {
     console.log('----------------------------------')

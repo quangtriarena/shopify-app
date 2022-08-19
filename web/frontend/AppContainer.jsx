@@ -1,83 +1,130 @@
 import { useEffect, useState } from 'react'
 import StoreSettingApi from './apis/store_setting'
-import { useSelector, useDispatch } from 'react-redux'
-import { selectNotify, showNotify } from './redux/reducers/notify'
-import { selectAppLoading } from './redux/reducers/appLoading'
-import { selectStoreSetting, setStoreSetting } from './redux/reducers/storeSetting'
 import { NavigationMenu, Toast } from '@shopify/app-bridge-react'
 import Preloader from './components/Preloader'
 import Privacy from './components/Privacy'
 import { Page } from '@shopify/polaris'
+import LoadingPage from './components/LoadingPage'
+import { AppBridgeProvider, PolarisProvider, QueryProvider } from './components'
+import { BrowserRouter } from 'react-router-dom'
+import AppFullscreen from './components/AppFullscreen'
+import App from './App'
+import ConfirmModal from './components/ConfirmModal'
+import { getStoreSetting } from './redux/actions/storeSetting'
 
 function AppContainer(props) {
-  const { actions, children, storeSetting } = props
+  const { actions, storeSetting, notify, appLoading } = props
 
-  const [isReady, setIsReady] = useState(false)
+  const [isFullscreen, setIsFullscreen] = useState(true)
+  const [openConfirmModal, setOpenConfirmModal] = useState(false)
+
+  useEffect(() => {
+    console.log('-------------------------')
+    console.log('App props:', props)
+  }, [props])
 
   const getStoreSetting = async () => {
     try {
-      let res = await StoreSettingApi.auth()
-      if (!res.success) {
-        throw res.error
-      }
-
-      // check session expired
-      if (res.data.status !== 'RUNNING') {
-        return window.top.location.replace(
-          `${window.BACKEND_URL}/api/auth?shop=${window.shopOrigin}`,
-        )
-      }
-
-      actions.setStoreSetting(res.data)
+      await actions.getStoreSetting()
     } catch (error) {
       actions.showNotify({ message: error.message, error: true })
     }
   }
 
   useEffect(() => {
-    getStoreSetting()
-  }, [])
-
-  useEffect(() => {
-    console.log('---------------------------------------')
-    console.log('Redux:')
-    Object.keys(props)
-      .filter((key) => key !== 'children')
-      .forEach((key) => console.log('| ' + key + ' :>> ', props[key]))
-
-    if (!isReady && storeSetting) {
-      setIsReady(true)
+    if (!storeSetting) {
+      getStoreSetting()
     }
-  }, [storeSetting])
+  }, [])
 
   const acceptPrivacy = async () => {
     try {
-      let res = await StoreSettingApi.update({ acceptedAt: new Date().toISOString() })
-      if (!res.success) {
-        throw res.error
-      }
-
+      actions.showAppLoading()
+      await actions.updateStoreSetting({ acceptedAt: new Date().toISOString() })
       actions.showNotify({ message: 'Privacy accepted' })
-      actions.setStoreSetting(res.data)
     } catch (error) {
       actions.showNotify({ message: error.message, error: true })
+    } finally {
+      actions.hideAppLoading()
     }
   }
 
-  if (!isReady) {
-    return <Preloader />
-  }
+  const toastMarkup = notify?.show && (
+    <Toast
+      error={notify.error}
+      content={notify.message}
+      onDismiss={() => {
+        if (notify.onDismiss) {
+          notify.onDismiss()
+        }
+        actions.hideNotify()
+      }}
+    />
+  )
 
   return (
-    <div>
-      {storeSetting?.acceptedAt ? (
-        children
-      ) : (
-        <Page fullWidth>
-          <Privacy onAction={acceptPrivacy} />
-        </Page>
-      )}
-    </div>
+    <PolarisProvider>
+      <BrowserRouter>
+        <AppBridgeProvider>
+          <QueryProvider>
+            <NavigationMenu
+              navigationLinks={
+                [
+                  // {
+                  //   label: 'Home',
+                  //   destination: '/',
+                  // },
+                ]
+              }
+            />
+
+            <AppFullscreen isFullscreen={isFullscreen}>
+              <Page fullWidth={isFullscreen}>
+                {storeSetting ? (
+                  storeSetting?.acceptedAt ? (
+                    <App
+                      {...props}
+                      isFullscreen={isFullscreen}
+                      onToggleFullscreen={() =>
+                        isFullscreen ? setOpenConfirmModal(true) : setIsFullscreen(!isFullscreen)
+                      }
+                    />
+                  ) : (
+                    <Page fullWidth>
+                      <Privacy onAction={acceptPrivacy} />
+                    </Page>
+                  )
+                ) : (
+                  <Preloader />
+                )}
+              </Page>
+            </AppFullscreen>
+
+            {appLoading?.loading && <LoadingPage />}
+
+            {toastMarkup}
+
+            {openConfirmModal && (
+              <ConfirmModal
+                title="Are you sure you want to exit fullscreen?"
+                content="Confirm to leave the fullscreen."
+                discardAction={{
+                  content: 'No, I want to stay',
+                  onAction: () => setOpenConfirmModal(false),
+                }}
+                submitAction={{
+                  content: 'Yes, I am sure',
+                  onAction: () => {
+                    setOpenConfirmModal(false)
+                    setIsFullscreen(false)
+                  },
+                }}
+              />
+            )}
+          </QueryProvider>
+        </AppBridgeProvider>
+      </BrowserRouter>
+    </PolarisProvider>
   )
 }
 

@@ -28,7 +28,7 @@ const create = async (job) => {
     }
 
     // get storeSetting
-    let storeSetting = await StoreSettingMiddleware.getByShop(shop)
+    let storeSetting = await StoreSettingMiddleware.findOne({ shop })
     const { accessToken } = storeSetting
 
     // validate app plan
@@ -41,7 +41,7 @@ const create = async (job) => {
       })
 
     // get duplicatorStore
-    let duplicatorStore = await StoreSettingMiddleware.findByUuid(backgroundJob.data.uuid)
+    let duplicatorStore = await StoreSettingMiddleware.findOne({ uuid: backgroundJob.data.uuid })
       .then((res) => res)
       .catch((err) => {
         throw new Error('Duplicator store not found')

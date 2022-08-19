@@ -35,7 +35,7 @@ const create = async (job) => {
     }
 
     // get store setting
-    storeSetting = await StoreSettingMiddleware.getByShop(shop)
+    storeSetting = await StoreSettingMiddleware.findOne({ shop })
     const { accessToken } = storeSetting
 
     // validate app plan

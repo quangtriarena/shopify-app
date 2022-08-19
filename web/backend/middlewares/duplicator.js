@@ -4,13 +4,13 @@ import StoreSettingMiddleware from './store_setting.js'
 
 const checkCode = async ({ shop, uuid }) => {
   try {
-    let duplicatorStore = await StoreSettingMiddleware.findByUuid(uuid)
+    let duplicatorStore = await StoreSettingMiddleware.findOne({ uuid })
       .then((res) => res)
       .catch((err) => {
         throw new Error('Invalid unique code')
       })
 
-    let storeSetting = await StoreSettingMiddleware.getByShop(shop)
+    let storeSetting = await StoreSettingMiddleware.findOne({ shop })
 
     if (storeSetting.uuid === uuid) {
       throw new Error('Duplicator store cannot be your store')

@@ -1,4 +1,4 @@
-import { Routes as ReactRouterRoutes, Route } from 'react-router-dom'
+import { Routes as ReactRouterRoutes, Route, useLocation, useNavigate } from 'react-router-dom'
 
 /**
  * File-based routing.
@@ -14,10 +14,17 @@ import { Routes as ReactRouterRoutes, Route } from 'react-router-dom'
  *
  * @return {Routes} `<Routes/>` from React Router, with a `<Route/>` for each file in `pages`
  */
-export default function Routes({ pages, appProps }) {
+export default function Routes({ pages, props }) {
   const routes = useRoutes(pages)
+  const location = useLocation()
+  const navigate = useNavigate()
+
   const routeComponents = routes.map(({ path, component: Component }) => (
-    <Route key={path} path={path} element={<Component {...appProps} />} />
+    <Route
+      key={path}
+      path={path}
+      element={<Component {...props} location={location} navigate={navigate} />}
+    />
   ))
 
   const NotFound = routes.find(({ path }) => path === '/notFound').component
@@ -25,7 +32,7 @@ export default function Routes({ pages, appProps }) {
   return (
     <ReactRouterRoutes>
       {routeComponents}
-      <Route path="*" element={<NotFound {...appProps} />} />
+      <Route path="*" element={<NotFound {...props} location={location} navigate={navigate} />} />
     </ReactRouterRoutes>
   )
 }

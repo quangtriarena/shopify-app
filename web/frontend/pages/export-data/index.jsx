@@ -11,22 +11,12 @@ function ExportPage(props) {
   const location = useLocation()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    let htmlEls = document.getElementsByTagName('HTML')
-    Array.from(htmlEls).forEach((el) => (el.style.overflowY = 'scroll'))
-    return () => {
-      Array.from(htmlEls).forEach((el) => (el.style.overflowY = 'auto'))
-    }
-  }, [])
-
   const handlExport = async (data) => {
     try {
       actions.showAppLoading()
 
       let res = await DuplicatorApi.export(data)
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       actions.showNotify({ message: 'Process is running in background. Waiting for finnish!' })
 

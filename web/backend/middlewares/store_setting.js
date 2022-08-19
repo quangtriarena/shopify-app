@@ -24,9 +24,9 @@ const findById = async (id) => {
   }
 }
 
-const findByUuid = async (uuid) => {
+const findOne = async (where) => {
   try {
-    return await Repository.findByUuid(uuid)
+    return await Repository.findOne(where)
   } catch (error) {
     throw error
   }
@@ -72,25 +72,16 @@ const getBySession = async (session) => {
   }
 }
 
-const getByShop = async (shop) => {
-  try {
-    return await Repository.getByShop(shop)
-  } catch (error) {
-    throw error
-  }
-}
-
 const StoreSettingMiddleware = {
   count,
   find,
   findById,
-  findByUuid,
+  findOne,
   create,
   update,
   // delete: _delete,
   init,
   getBySession,
-  getByShop,
 }
 
 export default StoreSettingMiddleware

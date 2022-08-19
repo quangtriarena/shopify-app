@@ -14,7 +14,7 @@ export default {
 
       switch (topic) {
         case 'app/uninstalled':
-          StoreSettingMiddleware.getByShop(domain).then((res) =>
+          StoreSettingMiddleware.findOne({ shop: domain }).then((res) =>
             StoreSettingMiddleware.update(res.id, {
               status: 'UNINSTALLED',
               appPlan: 'BASIC',

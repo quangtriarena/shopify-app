@@ -1,6 +1,5 @@
 import { Card, Stack, Button, DisplayText, Tooltip } from '@shopify/polaris'
 import SubmitionApi from '../apis/submition'
-import { useLocation, useNavigate } from 'react-router-dom'
 import CurrentPlanBanner from '../components/CurrentPlanBanner/CurrentPlanBanner'
 import UniqueCode from '../components/UniqueCode'
 import DuplicatorStore from '../components/DuplicatorStore'
@@ -11,10 +10,7 @@ import { RefreshMinor } from '@shopify/polaris-icons'
 import AppHeader from '../components/AppHeader'
 
 export default function HomePage(props) {
-  const { actions, storeSetting } = props
-
-  const location = useLocation()
-  const navigate = useNavigate()
+  const { actions, storeSetting, location, navigate } = props
 
   const handleSubmit = async () => {
     console.log('handleSubmit')
@@ -22,15 +18,12 @@ export default function HomePage(props) {
       actions.showAppLoading()
 
       let res = await SubmitionApi.submit()
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       console.log('res.data :>> ', res.data)
 
       actions.showNotify({ message: 'Submition successful' })
     } catch (error) {
-      console.log(error)
       actions.showNotify({ message: error.message, error: true })
     } finally {
       actions.hideAppLoading()
@@ -44,13 +37,10 @@ export default function HomePage(props) {
       setPackages(null)
 
       let res = await DuplicatorApi.getPackages()
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       setPackages(res.data)
     } catch (error) {
-      console.log(error)
       actions.showNotify({ message: error.message, error: true })
     }
   }
@@ -64,16 +54,13 @@ export default function HomePage(props) {
       actions.showAppLoading()
 
       let res = await DuplicatorApi.delete(deleted.id)
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       let _package = packages.filter((item) => item.id !== deleted.id)
       setPackages(_package)
 
       actions.showNotify({ message: 'Deleted' })
     } catch (error) {
-      console.log(error)
       actions.showNotify({ message: error.message, error: true })
     } finally {
       actions.hideAppLoading()
@@ -88,16 +75,13 @@ export default function HomePage(props) {
         status: 'CANCELED',
         message: 'Canceled by user',
       })
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       let _package = packages.map((item) => (item.id === canceled.id ? res.data : item))
       setPackages(_package)
 
       actions.showNotify({ message: 'Canceled' })
     } catch (error) {
-      console.log(error)
       actions.showNotify({ message: error.message, error: true })
     } finally {
       actions.hideAppLoading()
@@ -152,7 +136,7 @@ export default function HomePage(props) {
         />
       </Card>
 
-      {/* <Button onClick={handleSubmit}>Submit test</Button> */}
+      <Button onClick={handleSubmit}>Submit test</Button>
     </Stack>
   )
 }

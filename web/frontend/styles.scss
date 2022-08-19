@@ -21,6 +21,10 @@
   --spacingLarge: 2em;
 }
 
+body {
+  overflow-y: scroll;
+}
+
 #app {
   padding-bottom: 4em;
 }

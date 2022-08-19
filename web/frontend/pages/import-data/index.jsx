@@ -21,9 +21,7 @@ function ImportPage(props) {
       setPackages(null)
 
       let res = await DuplicatorApi.getDuplicatorPackages()
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       setPackages(res.data)
     } catch (error) {
@@ -45,9 +43,7 @@ function ImportPage(props) {
       actions.showAppLoading()
 
       let res = await DuplicatorApi.import({ package: item.id, uuid: storeSetting.duplicator })
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       actions.showNotify({ message: 'Process is running in background. Waiting for finnish!' })
 

@@ -16,14 +16,12 @@ import { ImagesMajor, EditMinor, DeleteMinor, ViewMinor } from '@shopify/polaris
 import CreateForm from './CreateForm'
 import ConfirmDelete from './ConfirmDelete'
 import Table from './Table'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import MySkeletonPage from '../../components/MySkeletonPage'
+import { generateVariantsFromOptions } from './actions'
 
 function ProductsPage(props) {
-  const { actions } = props
-
-  const location = useLocation()
-  const navigate = useNavigate()
+  const { actions, location, navigate } = props
 
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -37,9 +35,7 @@ function ProductsPage(props) {
       actions.showAppLoading()
 
       let res = await ProductApi.find(query)
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       setProducts(res.data)
     } catch (error) {
@@ -59,9 +55,7 @@ function ProductsPage(props) {
       actions.showAppLoading()
 
       let res = await ProductApi.count()
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       setCount(res.data.count)
     } catch (error) {
@@ -80,10 +74,24 @@ function ProductsPage(props) {
     try {
       actions.showAppLoading()
 
+      let options = [...formData['options']]
+      options = options
+        .filter((item) => item.name.value && item.values.value)
+        .map((item) => ({
+          name: item.name.value,
+          values: item['values'].value.split(',').filter((item) => item),
+        }))
+
       let data = {
         title: formData.title.value,
         body_html: formData.body_html.value,
       }
+      if (options.length) {
+        data.options = options
+        data.variants = generateVariantsFromOptions(options)
+      }
+
+      console.log('data :>> ', data)
 
       let res = null
 
@@ -94,9 +102,9 @@ function ProductsPage(props) {
         // create
         res = await ProductApi.create(data)
       }
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
+
+      console.log('res.data :>> ', res.data)
 
       actions.showNotify({ message: created.id ? 'Saved' : 'Created' })
 
@@ -116,9 +124,7 @@ function ProductsPage(props) {
       actions.showAppLoading()
 
       let res = await ProductApi.delete(deleted.id)
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       actions.showNotify({ message: 'Deleted' })
 

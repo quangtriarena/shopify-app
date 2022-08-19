@@ -70,9 +70,9 @@ export default {
       const session = await verifyToken(req, res)
       const { shop, accessToken } = session
 
-      let storeSetting = await StoreSettingMiddleware.getByShop(shop)
+      let storeSetting = await StoreSettingMiddleware.findOne({ shop })
 
-      let duplicatorStore = await StoreSettingMiddleware.findByUuid(storeSetting.duplicator)
+      let duplicatorStore = await StoreSettingMiddleware.findOne({ uuid: storeSetting.duplicator })
 
       let data = await DuplicatorPackageMiddleware.getAll(duplicatorStore.shop)
 
@@ -102,9 +102,9 @@ export default {
       const session = await verifyToken(req, res)
       const { shop, accessToken } = session
 
-      let storeSetting = await StoreSettingMiddleware.getByShop(shop)
+      let storeSetting = await StoreSettingMiddleware.findOne({ shop })
 
-      let duplicatorStore = await StoreSettingMiddleware.findByUuid(storeSetting.duplicator)
+      let duplicatorStore = await StoreSettingMiddleware.findOne({ uuid: storeSetting.duplicator })
 
       return ResponseHandler.success(res, duplicatorStore)
     } catch (error) {

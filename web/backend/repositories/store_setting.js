@@ -48,9 +48,9 @@ export default {
     }
   },
 
-  findByUuid: async (uuid) => {
+  findOne: async (where) => {
     try {
-      let entry = await Model.findOne({ where: { uuid } })
+      let entry = await Model.findOne({ where })
       if (!entry) {
         throw new Error(ErrorCodes.NOT_FOUND)
       }
@@ -104,6 +104,7 @@ export default {
           shop: session.shop,
           accessToken: session.accessToken,
           scope: session.scope,
+          testStore: process.env.SHOP === session.shop,
         })
         storeSetting = storeSetting.toJSON()
       } else {
@@ -136,19 +137,6 @@ export default {
       }
 
       return storeSetting
-    } catch (error) {
-      throw { message: error.message }
-    }
-  },
-
-  getByShop: async (shop) => {
-    try {
-      let storeSetting = await Model.findOne({ where: { shop } })
-      if (!storeSetting) {
-        throw new Error(ErrorCodes.UNAUTHORIZED)
-      }
-
-      return storeSetting.toJSON()
     } catch (error) {
       throw { message: error.message }
     }
