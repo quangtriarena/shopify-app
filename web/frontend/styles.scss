@@ -21,8 +21,12 @@
   --spacingLarge: 2em;
 }
 
+body {
+  overflow-y: scroll;
+}
+
 #app {
-  padding: 1em 1em 4em;
+  padding-bottom: 4em;
 }
 
 b {
@@ -114,12 +118,6 @@ b {
 }
 
 /* CUSTOM POLARIS STYLES */
-.Polaris-Page {
-  .Polaris-Page__Content {
-    padding-top: 0 !important;
-  }
-}
-
 .Polaris-DataTable {
   thead {
     background-color: #f1f1f1;

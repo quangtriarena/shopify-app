@@ -72,18 +72,7 @@ const getBySession = async (session) => {
   }
 }
 
-const getByShop = async (shop) => {
-  try {
-    return await Repository.getByShop(shop)
-  } catch (error) {
-    throw error
-  }
-}
-
 const StoreSettingMiddleware = {
-  STATUS: Repository.STATUS,
-  ROLE: Repository.ROLE,
-  APP_PLAN: Repository.APP_PLAN,
   count,
   find,
   findById,
@@ -93,7 +82,6 @@ const StoreSettingMiddleware = {
   // delete: _delete,
   init,
   getBySession,
-  getByShop,
 }
 
 export default StoreSettingMiddleware

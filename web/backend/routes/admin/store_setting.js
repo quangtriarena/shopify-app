@@ -1,7 +1,6 @@
-import verifyToken from '../../auth/verifyToken.js'
-import ResponseHandler from '../../helpers/responseHandler.js'
-import StoreSettingMiddleware from '../../middlewares/store_setting.js'
+import Controller from './../../controller/store_setting.js'
 
+<<<<<<< HEAD
 export default function storeSettingRoute(app, Shopify) {
   app.get('/api/store-settings', async (req, res) => {
     try {
@@ -30,4 +29,9 @@ export default function storeSettingRoute(app, Shopify) {
       return ResponseHandler.error(res, error)
     }
   })
+=======
+export default function storeSettingRoute(app) {
+  app.get('/api/store-settings', Controller.auth)
+  app.put('/api/store-settings', Controller.update)
+>>>>>>> 6763c1d62b0652973c3edeb3da9e6ddd815d9006
 }

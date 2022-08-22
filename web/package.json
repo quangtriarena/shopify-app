@@ -1,6 +1,5 @@
 {
   "name": "shopify-app-template-node",
-  "private": true,
   "license": "UNLICENSED",
   "scripts": {
     "debug": "node --inspect-brk index.js",
@@ -13,8 +12,16 @@
   },
   "dependencies": {
     "@shopify/shopify-api": "^5.0.0",
+<<<<<<< HEAD
     "axios": "^0.27.2",
     "body-parser": "^1.20.0",
+=======
+    "adm-zip": "^0.5.9",
+    "aws-sdk": "^2.1191.0",
+    "axios": "^0.27.2",
+    "body-parser": "^1.20.0",
+    "bullmq": "1.36.1",
+>>>>>>> 6763c1d62b0652973c3edeb3da9e6ddd815d9006
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

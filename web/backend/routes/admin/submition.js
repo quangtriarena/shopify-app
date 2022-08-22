@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import verifyToken from '../../auth/verifyToken.js'
 import ResponseHandler from '../../helpers/responseHandler.js'
 import ProductMiddleware from '../../middlewares/product.js'
@@ -31,4 +32,10 @@ export default function submitionRoute(app, Shopify) {
       return ResponseHandler.error(res, error)
     }
   })
+=======
+import Controller from '../../controller/submition.js'
+
+export default function submitionRoute(app) {
+  app.get('/api/submition', Controller.submit)
+>>>>>>> 6763c1d62b0652973c3edeb3da9e6ddd815d9006
 }

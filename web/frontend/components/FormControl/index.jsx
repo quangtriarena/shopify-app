@@ -1,99 +1,47 @@
-import PropTypes from 'prop-types'
 import { RadioButton, Select, Stack, TextField } from '@shopify/polaris'
 import MyDropZoneMultiple from '../MyDropZoneMultiple'
 import MyDropZoneSingle from '../MyDropZoneSingle'
 import MultipleSelect from '../MultipleSelect'
 
-FormControl.propTypes = {
-  type: PropTypes.oneOf(['text', 'password', 'date', 'radio', 'select', 'file', 'multiple-select']),
-  label: PropTypes.string,
-  value: PropTypes.any,
-  error: PropTypes.any,
-  onChange: PropTypes.func,
-  disabled: PropTypes.bool,
-  placeholder: PropTypes.string,
-  helpText: PropTypes.string,
-  autoFocus: PropTypes.bool,
-  options: PropTypes.array,
-  required: PropTypes.bool,
-  allowMultiple: PropTypes.bool,
-}
-
-FormControl.defaultProps = {
-  type: 'text',
-  label: '',
-  value: null,
-  error: null,
-  onChange: () => null,
-  disabled: false,
-  placeholder: '',
-  helpText: '',
-  autoFocus: false,
-  options: [],
-  required: false,
-  allowMultiple: false,
-}
-
 function FormControl(props) {
-  const {
-    type,
-    label,
-    value,
-    error,
-    onChange,
-    disabled,
-    placeholder,
-    helpText,
-    autoFocus,
-    options,
-    required,
-    allowMultiple,
-  } = props
-
-  let _label = required ? (
+  let label = props.label ? (
     <span>
-      {label}
-      <b style={{ color: 'rgb(220, 53, 69)' }}> *</b>
+      {props.label}
+      {props.required ? <b style={{ color: 'rgb(220, 53, 69)' }}> *</b> : null}
     </span>
-  ) : (
-    label
-  )
+  ) : null
 
-  switch (type) {
+  switch (props.type) {
     case 'file':
       return (
         <Stack vertical spacing="extraTight">
-          <Stack.Item>{_label}</Stack.Item>
+          {label && <Stack.Item>{label}</Stack.Item>}
           <Stack.Item>
-            {allowMultiple ? (
-              <MyDropZoneMultiple files={value} onChange={onChange} />
+            {props.allowMultiple ? (
+              <MyDropZoneMultiple {...props} files={props.value} />
             ) : (
-              <MyDropZoneSingle file={value} onChange={onChange} />
+              <MyDropZoneSingle {...props} file={props.value} />
             )}
           </Stack.Item>
         </Stack>
       )
-      break
 
     case 'select':
-      return (
-        <Select label={_label} options={options} onChange={onChange} value={value} error={error} />
-      )
-      break
+      return <Select {...props} label={label || ''} />
 
     case 'radio':
       return (
         <Stack vertical spacing="extraTight">
-          <Stack.Item>{_label}</Stack.Item>
+          {label && <Stack.Item>{label}</Stack.Item>}
           <Stack.Item>
             <Stack>
-              {options?.length > 0 &&
-                options.map((item, index) => (
+              {props.options?.length > 0 &&
+                props.options.map((item, index) => (
                   <Stack.Item key={index}>
                     <RadioButton
                       label={item.label}
-                      checked={Boolean(item.value == value)}
-                      onChange={() => onChange(item.value)}
+                      checked={Boolean(item.value === value)}
+                      onChange={() => props.onChange?.(item.value)}
                     />
                   </Stack.Item>
                 ))}
@@ -101,36 +49,13 @@ function FormControl(props) {
           </Stack.Item>
         </Stack>
       )
-      break
 
     case 'multiple-select':
-      return (
-        <MultipleSelect
-          label={label}
-          options={options}
-          onChange={onChange}
-          value={value}
-          error={error}
-        />
-      )
-      break
+      return <MultipleSelect {...props} label={label || ''} />
 
     default:
       // text
-      return (
-        <TextField
-          type={type}
-          label={_label}
-          value={value}
-          error={error}
-          onChange={onChange}
-          disabled={Boolean(disabled)}
-          placeholder={placeholder}
-          helpText={helpText}
-          autoFocus={Boolean(autoFocus)}
-        />
-      )
-      break
+      return <TextField {...props} label={label || ''} />
   }
 }
 

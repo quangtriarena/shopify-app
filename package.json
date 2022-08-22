@@ -10,11 +10,15 @@
     "info": "shopify app info",
     "scaffold": "shopify app scaffold",
     "deploy": "shopify app deploy",
+<<<<<<< HEAD
     "remove_dependencies": "rm -rf node_modules/ yarn.lock && cd web/ && rm -rf node_modules/ yarn.lock && cd frontend/ && rm -rf node_modules/ yarn.lock && cd ../../",
+=======
+>>>>>>> 6763c1d62b0652973c3edeb3da9e6ddd815d9006
     "install_dependencies": "yarn && cd web/ && yarn && cd frontend/ && yarn && cd ../../",
     "serve": "cd web/ && yarn serve",
     "pm2:start": "yarn build && pm2 start ecosystem.config.js --env production",
-    "pm2:restart": "pm2 stop 0 && yarn build && pm2 restart ecosystem.config.js --env production"
+    "pm2:restart": "pm2 stop 0 && yarn build && pm2 restart ecosystem.config.js --env production",
+    "push:master": "git add . && git commit -m \"update code\" && git push origin master"
   },
   "dependencies": {
     "@shopify/app": "3.6.1",
@@ -23,6 +27,9 @@
     "gulp": "^4.0.2",
     "query-string": "^7.1.1",
     "react-froala-wysiwyg": "^4.0.13"
+  },
+  "engines": {
+    "node": ">=14.13.1"
   },
   "author": "ArenaCommerce"
 }

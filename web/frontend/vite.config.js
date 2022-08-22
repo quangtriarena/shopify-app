@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config({ path: './../../.env' })
 
+<<<<<<< HEAD
 // console.log('VITE PROCESS')
 // console.log(`| SHOPIFY_API_KEY: ${process.env.SHOPIFY_API_KEY}`)
 // console.log(`| SHOPIFY_API_SECRET: ${process.env.SHOPIFY_API_SECRET}`)
@@ -13,6 +14,8 @@ dotenv.config({ path: './../../.env' })
 // console.log(`| BACKEND_URL: ${process.env.BACKEND_URL}`)
 // console.log(`| SHOP: ${process.env.SHOP}`)
 
+=======
+>>>>>>> 6763c1d62b0652973c3edeb3da9e6ddd815d9006
 import { defineConfig } from 'vite'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -60,7 +63,7 @@ export default defineConfig({
   plugins: [react()],
   define: {
     'process.env.SHOPIFY_API_KEY': JSON.stringify(process.env.SHOPIFY_API_KEY),
-    'process.env.BACKEND_URL': JSON.stringify(process.env.BACKEND_URL),
+    'process.env.HOST': JSON.stringify(process.env.HOST),
   },
   resolve: {
     preserveSymlinks: true,

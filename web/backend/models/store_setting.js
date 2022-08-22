@@ -27,26 +27,20 @@ const Model = PostgresSequelize.define('store_settings', {
     type: DataTypes.ENUM('RUNNING', 'UNINSTALLED'),
     defaultValue: 'RUNNING',
   },
-  contact: {
-    type: DataTypes.STRING,
-  },
-  storePlan: {
-    type: DataTypes.STRING,
-  },
-  role: {
-    type: DataTypes.ENUM('GUEST', 'MEMBERSHIP', 'ADMIN'),
-    defaultValue: 'GUEST',
+  acceptedAt: {
+    type: DataTypes.DATE,
   },
   appPlan: {
     type: DataTypes.ENUM('BASIC', 'PRO', 'PLUS'),
     defaultValue: 'BASIC',
   },
-  acceptedAt: {
-    type: DataTypes.DATE,
-  },
   testStore: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
+  },
+  role: {
+    type: DataTypes.ENUM('GUEST', 'MEMBERSHIP', 'ADMIN'),
+    defaultValue: 'GUEST',
   },
   credits: {
     type: DataTypes.INTEGER,
@@ -55,6 +49,9 @@ const Model = PostgresSequelize.define('store_settings', {
   billings: {
     type: DataTypes.JSON,
     defaultValue: null,
+  },
+  duplicator: {
+    type: DataTypes.STRING,
   },
 })
 

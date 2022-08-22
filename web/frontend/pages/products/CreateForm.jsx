@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types'
-import { Button, Card, Stack, TextField } from '@shopify/polaris'
+import { Button, Card, Checkbox, DisplayText, Stack, TextField } from '@shopify/polaris'
 import { useEffect, useState } from 'react'
 import AppHeader from '../../components/AppHeader'
 import FormValidate from '../../helpers/formValidate'
-import MyDropZoneMultiple from '../../components/MyDropZoneMultiple'
+
 import FormControl from '../../components/FormControl'
+import OptionForm from './OptionForm'
 
 CreateForm.propTypes = {
   created: PropTypes.object,
@@ -18,7 +19,46 @@ CreateForm.defaultProps = {
   onSubmit: () => null,
 }
 
-const initialFormData = {
+const optionFormData = {
+  name: {
+    type: 'text',
+    label: 'Option name',
+    value: '',
+    error: '',
+    required: true,
+    validate: {
+      trim: true,
+      required: [true, 'Required!'],
+      minlength: [2, 'Too short!'],
+      maxlength: [200, 'Too long!'],
+    },
+  },
+  values: {
+    type: 'text',
+    label: 'Option values',
+    value: '',
+    error: '',
+    required: true,
+    validate: {
+      trim: true,
+      required: [true, 'Required!'],
+      minlength: [1, 'Too short!'],
+      maxlength: [100, 'Too long!'],
+    },
+  },
+}
+
+let initOptionFormData = Array.from([
+  // { name: 'Size', values: 's,m,l' },
+  // { name: 'Color', values: 'red,black,yellow' },
+  // { name: 'Material', values: 'gold,sliver' },
+  { name: '', values: '' },
+]).map((item) => ({
+  name: { ...optionFormData.name, value: item.name },
+  values: { ...optionFormData.values, value: item.values },
+}))
+
+const initFormData = {
   title: {
     type: 'text',
     label: 'Title',
@@ -31,7 +71,7 @@ const initialFormData = {
       minlength: [2, 'Too short!'],
       maxlength: [200, 'Too long!'],
     },
-    autoFocus: true,
+    focused: true,
   },
 
   body_html: {
@@ -44,10 +84,12 @@ const initialFormData = {
       trim: true,
       required: [true, 'Required!'],
       minlength: [2, 'Too short!'],
+      maxlength: [2500, 'Too long!'],
     },
     multiline: 6,
     autoFocus: true,
   },
+
 
   images: {
     type: 'file',
@@ -67,22 +109,29 @@ const initialFormData = {
   //   validate: {},
   //   options: [{ label: 'Select a vendor', value: '' }],
   // },
+
+  options: null,
+
 }
 
 function CreateForm(props) {
   const { actions, created, onDiscard, onSubmit } = props
 
-  const [formData, setFormData] = useState(initialFormData)
+  const [formData, setFormData] = useState(initFormData)
+
+  useEffect(() => console.log('formData :>> ', formData), [formData])
 
   useEffect(() => console.log('formData', formData), [formData])
 
   useEffect(() => {
-    let _formData = JSON.parse(JSON.stringify(initialFormData))
+    let _formData = JSON.parse(JSON.stringify(initFormData))
 
     /**
      * test
      */
-    _formData.title.value = `Sample product`
+
+    _formData.title.value = `Sample product - ${new Date().toString()}`
+
     _formData.body_html.value = `Sample product`
 
     if (created.id) {
@@ -105,13 +154,21 @@ function CreateForm(props) {
 
   const handleSubmit = () => {
     try {
-      const { valid, data } = FormValidate.validateForm(formData)
+      let _formData = { ...formData }
+
+      delete _formData.options
+
+      const { valid, data } = FormValidate.validateForm(_formData)
+
+      _formData = { ...formData, ...data }
 
       if (valid) {
+
         data['images'].value = formData['images'].value
         onSubmit(data)
+
       } else {
-        setFormData(data)
+        setFormData({ ...formData, ...data })
 
         throw new Error('Invalid form data')
       }
@@ -123,25 +180,38 @@ function CreateForm(props) {
 
   return (
     <Stack vertical alignment="fill">
-      <Stack.Item>
-        <AppHeader
-          {...props}
-          title={created.id ? 'Update product' : 'Add product'}
-          onBack={onDiscard}
-        />
-      </Stack.Item>
+      <AppHeader
+        {...props}
+        title={created.id ? 'Update product' : 'Add product'}
+        onBack={onDiscard}
+      />
 
-      <Stack.Item>
-        <Card sectioned>
-          <Stack vertical alignment="fill">
-            <FormControl
-              {...formData['title']}
-              onChange={(value) => handleChange('title', value)}
-            />
+      <Card sectioned>
+        <Stack vertical alignment="fill">
+          <FormControl {...formData['title']} onChange={(value) => handleChange('title', value)} />
+          <FormControl
+            {...formData['body_html']}
+            onChange={(value) => handleChange('body_html', value)}
+          />
+        </Stack>
+      </Card>
 
-            <FormControl
-              {...formData['body_html']}
-              onChange={(value) => handleChange('body_html', value)}
+      <Card>
+        <Card.Section>
+          <Stack vertical>
+            <DisplayText size="small">Options</DisplayText>
+            <Checkbox
+              label="This product has options, like size or color"
+              checked={Boolean(formData['options'])}
+              onChange={() => {
+                let _formData = JSON.parse(JSON.stringify(formData))
+                if (formData['options']) {
+                  _formData['options'] = null
+                } else {
+                  _formData['options'] = initOptionFormData
+                }
+                setFormData(_formData)
+              }}
             />
 
             {/* <FormControl
@@ -154,17 +224,34 @@ function CreateForm(props) {
               onChange={(value) => handleChange('images', value)}
             />
           </Stack>
-        </Card>
-      </Stack.Item>
+        </Card.Section>
+        {formData['options'] &&
+          formData['options'].map((item, index) => (
+            <Card.Section key={index}>
+              <OptionForm
+                formData={item}
+                onChange={(value) => {
+                  let _formData = JSON.parse(JSON.stringify(formData))
+                  _formData['options'][index] = value
 
-      <Stack.Item>
-        <Stack distribution="trailing">
-          <Button onClick={onDiscard}>Discard</Button>
-          <Button primary onClick={handleSubmit}>
-            {created.id ? 'Save' : 'Add'}
-          </Button>
-        </Stack>
-      </Stack.Item>
+                  // check has empty option
+                  if (!_formData['options'].filter((item) => item['name'].value === '').length) {
+                    _formData['options'].push({ ...optionFormData })
+                  }
+
+                  setFormData(_formData)
+                }}
+              />
+            </Card.Section>
+          ))}
+      </Card>
+
+      <Stack distribution="trailing">
+        <Button onClick={onDiscard}>Discard</Button>
+        <Button primary onClick={handleSubmit}>
+          {created.id ? 'Save' : 'Add'}
+        </Button>
+      </Stack>
     </Stack>
   )
 }

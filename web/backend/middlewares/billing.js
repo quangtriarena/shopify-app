@@ -1,8 +1,6 @@
 import apiCaller from '../helpers/apiCaller.js'
 import StoreSettingRepository from './../repositories/store_setting.js'
 
-const { BACKEND_URL } = process.env
-
 const APP_BILLINGS = [
   {
     id: 1001,
@@ -125,12 +123,12 @@ const create = async ({ shop, accessToken, id }) => {
   try {
     let appBilling = APP_BILLINGS.find((item) => item.id == id)
     if (!appBilling) {
-      throw { message: 'Invalid app billing' }
+      throw new Error('Invalid app billing')
     }
 
-    let storeSetting = await StoreSettingRepository.getByShop(shop)
+    let storeSetting = await StoreSettingRepository.findOne({ shop })
     if (!storeSetting) {
-      throw { message: 'Invalid session' }
+      throw new Error('Invalid session')
     }
 
     let billings = storeSetting.billings || []
@@ -150,7 +148,7 @@ const create = async ({ shop, accessToken, id }) => {
               [appBilling.type]: {
                 name: appBilling.name,
                 price: appBilling.price[storeSetting.appPlan],
-                return_url: `${BACKEND_URL}/api/auth?shop=${shop}`,
+                return_url: `${process.env.HOST}/api/auth?shop=${shop}`,
                 test: storeSetting.testStore,
               },
             },
@@ -158,7 +156,7 @@ const create = async ({ shop, accessToken, id }) => {
 
           // clear old billings
           billings = billings.filter(
-            (item) => !Boolean(item.type === appBilling.type && item.status === 'active')
+            (item) => !Boolean(item.type === appBilling.type && item.status === 'active'),
           )
 
           billings.push({
@@ -189,7 +187,7 @@ const create = async ({ shop, accessToken, id }) => {
                 method: 'DELETE',
               })
                 .then((res) => {})
-                .catch((err) => {})
+                .catch((err) => {}),
             )
 
           // clear old billings
@@ -218,7 +216,7 @@ const create = async ({ shop, accessToken, id }) => {
               [appBilling.type]: {
                 name: appBilling.name,
                 price: appBilling.price,
-                return_url: `${BACKEND_URL}/api/auth?shop=${shop}`,
+                return_url: `${process.env.HOST}/api/auth?shop=${shop}`,
                 test: storeSetting.testStore,
               },
             },

@@ -1,7 +1,6 @@
-import verifyToken from '../../auth/verifyToken.js'
-import ResponseHandler from '../../helpers/responseHandler.js'
-import ProductMiddleware from '../../middlewares/product.js'
+import Controller from './../../controller/product.js'
 
+<<<<<<< HEAD
 export default function productRoute(app, Shopify) {
   app.get('/api/products/count', async (req, res) => {
     try {
@@ -93,4 +92,13 @@ export default function productRoute(app, Shopify) {
       return ResponseHandler.error(res, error)
     }
   })
+=======
+export default function productRoute(app) {
+  app.get('/api/products/count', Controller.count)
+  app.get('/api/products', Controller.find)
+  app.get('/api/products/:id', Controller.findById)
+  app.post('/api/products', Controller.create)
+  app.put('/api/products/:id', Controller.update)
+  app.delete('/api/products/:id', Controller.delete)
+>>>>>>> 6763c1d62b0652973c3edeb3da9e6ddd815d9006
 }

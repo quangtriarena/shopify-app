@@ -21,8 +21,6 @@ MultipleSelect.defaultProps = {
 function MultipleSelect(props) {
   const { label, options, error, onChange } = props
 
-  console.log('options :>> ', options)
-
   const [value, setValue] = useState(props.value)
   const [active, setActive] = useState(false)
 
@@ -43,46 +41,41 @@ function MultipleSelect(props) {
 
   return (
     <Stack vertical spacing="extraTight">
-      <Stack.Item>
-        <Popover
-          active={active}
-          activator={
-            <Button
-              disclosure
-              onClick={() => {
-                setActive(!active)
-                setValue(props.value)
-              }}
-            >
-              {label}
-            </Button>
-          }
-          onClose={handleDiscard}
-        >
-          <Popover.Pane>
-            <OptionList onChange={setValue} options={options} selected={value} allowMultiple />
-          </Popover.Pane>
-          <Popover.Pane fixed>
-            <Popover.Section>
-              <Stack distribution="trailing" spacing="tight">
-                <Button size="slim" onClick={handleSelectAll}>
-                  <div style={{ minWidth: 62 }}>
-                    {value.length === options.length ? 'Clear all' : 'Select all'}
-                  </div>
-                </Button>
-                <Button size="slim" primary onClick={handleSubmit}>
-                  Apply
-                </Button>
-              </Stack>
-            </Popover.Section>
-          </Popover.Pane>
-        </Popover>
-      </Stack.Item>
-      {Boolean(error) && (
-        <Stack.Item>
-          <div className="color__error">{error}</div>
-        </Stack.Item>
-      )}
+      <Popover
+        active={active}
+        activator={
+          <Button
+            disclosure
+            onClick={() => {
+              setActive(!active)
+              setValue(props.value)
+            }}
+            fullWidth
+          >
+            {label}
+          </Button>
+        }
+        onClose={handleDiscard}
+      >
+        <Popover.Pane>
+          <OptionList onChange={setValue} options={options} selected={value} allowMultiple />
+        </Popover.Pane>
+        <Popover.Pane fixed>
+          <Popover.Section>
+            <Stack distribution="trailing" spacing="tight">
+              <Button size="slim" onClick={handleSelectAll}>
+                <div style={{ minWidth: 62 }}>
+                  {value.length === options.length ? 'Clear all' : 'Select all'}
+                </div>
+              </Button>
+              <Button size="slim" primary onClick={handleSubmit}>
+                Apply
+              </Button>
+            </Stack>
+          </Popover.Section>
+        </Popover.Pane>
+      </Popover>
+      {Boolean(error) && <div className="color__error">{error}</div>}
     </Stack>
   )
 }

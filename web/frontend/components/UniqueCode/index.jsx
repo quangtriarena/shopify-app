@@ -10,22 +10,20 @@ UniqueCode.propTypes = {
 function UniqueCode(props) {
   const { storeSetting, actions } = props
 
-  const [lockCode, setLockCode] = useState(false)
+  const [lockCode, setLockCode] = useState(true)
 
   return (
-    <Card sectioned>
-      <Stack vertical alignment="fill" spacing="extraLoose">
+    <Card>
+      <Card.Section>
         <Stack distribution="center">
-          <DisplayText size="small">
-            <span style={{ textTransform: 'capitalize' }}>Your Store Unique Code</span>
-          </DisplayText>
+          <DisplayText size="small">Your Store Unique Code</DisplayText>
         </Stack>
-        <Stack vertical alignment="center" spacing="tight">
-          <Stack distribution="center">
-            <div className="color__error">
-              {lockCode ? storeSetting.uuid.replace(/./g, '*') : storeSetting.uuid}
-            </div>
-          </Stack>
+      </Card.Section>
+      <Card.Section>
+        <Stack vertical alignment="center">
+          <div className="color__error">
+            {lockCode ? 'xxxx-xxxx-xxxx-xxxx-xxxx' : storeSetting.uuid}
+          </div>
           <Stack distribution="center">
             <Button
               primary
@@ -37,16 +35,22 @@ function UniqueCode(props) {
             >
               Copy
             </Button>
-            <Button onClick={() => setLockCode(!lockCode)}>Lock Code</Button>
+            <Button onClick={() => setLockCode(!lockCode)}>
+              <div style={{ minWidth: 90, textAlign: 'center' }}>
+                {lockCode ? 'Unlock Code' : 'Lock Code'}
+              </div>
+            </Button>
           </Stack>
         </Stack>
+      </Card.Section>
+      <Card.Section subdued>
         <Stack distribution="center">
           <div className="color__note" style={{ maxWidth: 400, textAlign: 'center' }}>
             Share this unique key with child-stores so that you can import packages to your
             child-stores.
           </div>
         </Stack>
-      </Stack>
+      </Card.Section>
     </Card>
   )
 }

@@ -1,9 +1,13 @@
+<<<<<<< HEAD
 import { Card, Page, Layout, TextContainer, Heading } from '@shopify/polaris'
+=======
+import { Card, Layout, TextContainer, Heading } from '@shopify/polaris'
+>>>>>>> 6763c1d62b0652973c3edeb3da9e6ddd815d9006
 import { TitleBar } from '@shopify/app-bridge-react'
 
 export default function PageName() {
   return (
-    <Page>
+    <>
       <TitleBar
         title="Page name"
         primaryAction={{
@@ -41,6 +45,10 @@ export default function PageName() {
           </Card>
         </Layout.Section>
       </Layout>
+<<<<<<< HEAD
     </Page>
+=======
+    </>
+>>>>>>> 6763c1d62b0652973c3edeb3da9e6ddd815d9006
   )
 }

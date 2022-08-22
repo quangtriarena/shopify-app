@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config({ path: './../.env' })
 
+<<<<<<< HEAD
 // console.log('WEB PROCESS')
 // console.log(`| SHOPIFY_API_KEY: ${process.env.SHOPIFY_API_KEY}`)
 // console.log(`| SHOPIFY_API_SECRET: ${process.env.SHOPIFY_API_SECRET}`)
@@ -13,6 +14,8 @@ dotenv.config({ path: './../.env' })
 // console.log(`| BACKEND_URL: ${process.env.BACKEND_URL}`)
 // console.log(`| SHOP: ${process.env.SHOP}`)
 
+=======
+>>>>>>> 6763c1d62b0652973c3edeb3da9e6ddd815d9006
 // @ts-check
 import { join } from 'path'
 import fs from 'fs'
@@ -114,35 +117,32 @@ export async function createServer(
 
   applyAuthMiddleware(app, { billing: billingSettings })
 
-  webhookRoute(app, Shopify)
+  // -------------------------------------------
+  /**
+   * WEBHOOK ROUTES
+   */
+  webhookRoute(app)
+  // -------------------------------------------
 
   // All endpoints after this point will require an active session
   app.use('/api/*', verifyRequest(app, { billing: billingSettings }))
-
-  app.get('/api/products/create', async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(req, res, app.get('use-online-tokens'))
-    let status = 200
-    let error = null
-
-    try {
-      await productCreator(session)
-    } catch (e) {
-      console.log(`Failed to process products/create: ${e.message}`)
-      status = 500
-      error = e.message
-    }
-    res.status(status).send({ success: status === 200, error })
-  })
 
   // -------------------------------------------
   /**
    * ADMIN ROUTES
    */
+<<<<<<< HEAD
   storeSettingRoute(app, Shopify)
   productRoute(app, Shopify)
   billingRoute(app, Shopify)
   submitionRoute(app, Shopify)
   uploadRoute(app, Shopify)
+=======
+  storeSettingRoute(app)
+  productRoute(app)
+  billingRoute(app)
+  submitionRoute(app)
+>>>>>>> 6763c1d62b0652973c3edeb3da9e6ddd815d9006
   // -------------------------------------------
 
   // All endpoints after this point will have access to a request.body
@@ -198,6 +198,7 @@ export async function createServer(
 
 createServer().then(({ app }) =>
   app.listen(PORT, () => {
+<<<<<<< HEAD
     console.log('++++++++++++++++++++++++++++++++++++')
     console.log('+                                  +')
     console.log('+   Welcome to ArenaCommerce App   +')
@@ -210,5 +211,18 @@ createServer().then(({ app }) =>
     console.log('| [DEV] Shopify App:')
     console.log(`| ${process.env.HOST}/api/auth?shop=${process.env.SHOP}`)
     console.log(`|`)
+=======
+    console.log(``)
+    console.log(`++++++++++++++++++++++++++++++++++++`)
+    console.log(`+                                  +`)
+    console.log(`+   Welcome to ArenaCommerce App   +`)
+    console.log(`+                                  +`)
+    console.log(`++++++++++++++++++++++++++++++++++++`)
+    console.log(``)
+    console.log(`[SERVE] ${process.env.HOST}/install`)
+    console.log(``)
+    console.log(`[ DEV ] ${process.env.HOST}/api/auth?shop=${process.env.SHOP}`)
+    console.log(``)
+>>>>>>> 6763c1d62b0652973c3edeb3da9e6ddd815d9006
   }),
 )

@@ -89,7 +89,7 @@ function Table(props) {
       headings={['No.', 'Product', 'Status', 'Advanced', 'Actions']}
       columnContentTypes={['text', 'text', 'text', 'text', 'text']}
       rows={rows}
-      footerContent={items ? (items?.length > 0 ? undefined : 'Have no data') : 'Loading..'}
+      footerContent={items ? (items?.length > 0 ? undefined : 'Have no data') : 'loading..'}
     />
   )
 }

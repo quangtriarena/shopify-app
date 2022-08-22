@@ -16,16 +16,14 @@ import { ImagesMajor, EditMinor, DeleteMinor, ViewMinor } from '@shopify/polaris
 import CreateForm from './CreateForm'
 import ConfirmDelete from './ConfirmDelete'
 import Table from './Table'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import MySkeletonPage from '../../components/MySkeletonPage'
 import UploadApi from '../../apis/upload'
 import qs from 'query-string'
+import { generateVariantsFromOptions } from './actions'
 
 function ProductsPage(props) {
-  const { actions } = props
-
-  const location = useLocation()
-  const navigate = useNavigate()
+  const { actions, location, navigate } = props
 
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -39,9 +37,7 @@ function ProductsPage(props) {
       actions.showAppLoading()
 
       let res = await ProductApi.find(query)
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       setProducts(res.data)
     } catch (error) {
@@ -62,9 +58,7 @@ function ProductsPage(props) {
       actions.showAppLoading()
 
       let res = await ProductApi.count()
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       setCount(res.data.count)
     } catch (error) {
@@ -80,58 +74,78 @@ function ProductsPage(props) {
   }, [])
 
   const handleSubmit = async (formData) => {
-    try {
-      actions.showAppLoading()
+      try {
+        actions.showAppLoading()
+        
+        if (formData['images'].value) {
+          let images = await UploadApi.upload(formData['images'].value)
 
-      if (formData['images'].value) {
-        let images = await UploadApi.upload(formData['images'].value)
+          if (!images.success) {
+            actions.showNotify({ error: true, message: images.error.message })
+          }
 
-        if (!images.success) {
-          actions.showNotify({ error: true, message: images.error.message })
+          formData['images'].value = [...images.data]
         }
 
-        formData['images'].value = [...images.data]
+        // let data = {}
+
+        // Object.keys(formData)
+        //   .filter((key) => !['images'].includes(key))
+        //   .forEach((key) => (formData[key].value ? (data[key] = formData[key].value) : null))
+
+        // if (formData['images'].value.length) {
+        //   data['images'] = formData['images'].value
+
+        //   data['images'] = data['images'].map((item) => ({
+        //     attachment: item.content,
+        //   }))
+        // } else {
+        //   data['images'] = []
+
+        // let options = [...formData['options']]
+        // options = options
+        //   .filter((item) => item.name.value && item.values.value)
+        //   .map((item) => ({
+        //     name: item.name.value,
+        //     values: item['values'].value.split(',').filter((item) => item),
+        //   }))
+
+        // let data = {
+        //   title: formData.title.value,
+        //   body_html: formData.body_html.value,
+
+        // }
+        if (options.length) {
+          data.options = options
+          data.variants = generateVariantsFromOptions(options)
+        }
+
+        console.log('data :>> ', data)
+
+        let res = null
+
+        if (created.id) {
+          // update
+          res = await ProductApi.update(created.id, data)
+        } else {
+          // create
+          res = await ProductApi.create(data)
+        }
+        if (!res.success) throw res.error
+
+        console.log('res.data :>> ', res.data)
+
+        actions.showNotify({ message: created.id ? 'Saved' : 'Created' })
+
+        setCreated(null)
+
+        getProducts(location.search)
+      } catch (error) {
+        console.log(error)
+        actions.showNotify({ message: error.message, error: true })
+      } finally {
+        actions.hideAppLoading()
       }
-
-      let data = {}
-
-      Object.keys(formData)
-        .filter((key) => !['images'].includes(key))
-        .forEach((key) => (formData[key].value ? (data[key] = formData[key].value) : null))
-
-      if (formData['images'].value.length) {
-        data['images'] = formData['images'].value
-
-        data['images'] = data['images'].map((item) => ({
-          attachment: item.content,
-        }))
-      } else {
-        data['images'] = []
-      }
-
-      let res = null
-
-      if (created.id) {
-        // update
-        res = await ProductApi.update(created.id, data)
-      } else {
-        // create
-        res = await ProductApi.create(data)
-      }
-      if (!res.success) {
-        throw res.error
-      }
-
-      actions.showNotify({ message: created.id ? 'Saved' : 'Created' })
-
-      setCreated(null)
-
-      getProducts(location.search)
-    } catch (error) {
-      console.log(error)
-      actions.showNotify({ message: error.message, error: true })
-    } finally {
-      actions.hideAppLoading()
     }
   }
 
@@ -140,9 +154,7 @@ function ProductsPage(props) {
       actions.showAppLoading()
 
       let res = await ProductApi.delete(deleted.id)
-      if (!res.success) {
-        throw res.error
-      }
+      if (!res.success) throw res.error
 
       actions.showNotify({ message: 'Deleted' })
 
@@ -220,6 +232,6 @@ function ProductsPage(props) {
       )}
     </Stack>
   )
-}
+
 
 export default ProductsPage
