@@ -21,8 +21,6 @@ import webhookRoute from './backend/routes/webhook/index.js'
 import storeSettingRoute from './backend/routes/admin/store_setting.js'
 import productRoute from './backend/routes/admin/product.js'
 import billingRoute from './backend/routes/admin/billing.js'
-import backgroundJobRoute from './backend/routes/admin/background_job.js'
-import duplicatorRoute from './backend/routes/admin/duplicator.js'
 import submitionRoute from './backend/routes/admin/submition.js'
 
 const USE_ONLINE_TOKENS = false
@@ -120,8 +118,6 @@ export async function createServer(
   storeSettingRoute(app)
   productRoute(app)
   billingRoute(app)
-  backgroundJobRoute(app)
-  duplicatorRoute(app)
   submitionRoute(app)
   // -------------------------------------------
 

@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import PackagesTable from '../components/PackagesTable'
 import { RefreshMinor } from '@shopify/polaris-icons'
 import AppHeader from '../components/AppHeader'
+import Intro from '../components/Intro'
 
 export default function HomePage(props) {
   const { actions, storeSetting, location, navigate } = props
@@ -104,39 +105,9 @@ export default function HomePage(props) {
 
       <CurrentPlanBanner {...props} />
 
-      <Stack distribution="fillEvenly" alignment="fill">
-        <Stack.Item fill>
-          <UniqueCode {...props} />
-        </Stack.Item>
-        <Stack.Item fill>
-          <DuplicatorStore {...props} />
-        </Stack.Item>
-      </Stack>
+      <Intro />
 
-      <Card>
-        <Card.Section>
-          <Stack distribution="equalSpacing" alignment="baseline">
-            <DisplayText size="small">Your Backup Packages</DisplayText>
-            <Stack>
-              <Tooltip content="Refresh">
-                <Button onClick={getPackages} icon={RefreshMinor}></Button>
-              </Tooltip>
-              <Button primary onClick={() => navigate('/export-data')}>
-                Create new package
-              </Button>
-            </Stack>
-          </Stack>
-        </Card.Section>
-        <PackagesTable
-          {...props}
-          items={packages}
-          actions={['edit', 'delete', 'cancel', 'copy', 'archive', 'restore']}
-          onDelete={(item) => handleDelete(item)}
-          onCancel={(item) => handleCancel(item)}
-        />
-      </Card>
-
-      <Button onClick={handleSubmit}>Submit test</Button>
+      {/* <Button onClick={handleSubmit}>Submit test</Button> */}
     </Stack>
   )
 }
